@@ -2,6 +2,27 @@ require(["esri/map", "dojo/domReady!"], function(Map) {
 	 $(document).ready(function() {
     $('select').material_select();
     $(".button-collapse").sideNav();
+    $('.dropdown-button').dropdown({
+      inDuration: 300,
+      outDuration: 225,
+      constrain_width: false, // Does not change width of dropdown to that of the activator
+      hover: true, // Activate on hover
+      gutter: 10, // Spacing from edge
+      belowOrigin: true, // Displays dropdown below the button
+      alignment: 'right' // Displays dropdown with edge aligned to the left of button
+    });
+    // $( "#loading" ).css('display','none');
+    $( "#loading" ).animate({
+    opacity: 0,
+    display:'none',
+  },1000, function() {
+    // Animation complete.
+    this.remove();
+    // this.css('display','none')
+  });
+
+
+       
   });
   var getData = function(parms,callback){
 	$.ajax({
