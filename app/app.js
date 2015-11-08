@@ -57,7 +57,6 @@ function verifyCredentials(username, password, done) {
         var userdata = JSON.parse(response.body)
         delete userdata['api_token'];
         userdata.id = userdata.username;
-        console.log(userdata)
         done(null, userdata);
       }else{
         done(null, null);
@@ -73,13 +72,13 @@ function ensureAuthenticated(req, res, next) {
 }
 
 passport.serializeUser(function(user, done) {
-  console.log('serializeUser');
+  // console.log('serializeUser');
     done(null, user);
 });
 
 passport.deserializeUser(function(user, done) {
     // Query database or cache here!
-    console.log('deserializeUser');
+    // console.log('deserializeUser');
     done(null, user);
 });
 

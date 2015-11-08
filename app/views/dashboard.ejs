@@ -18,6 +18,11 @@
   <div class="loader-section section-right"></div>
 </div>
   <nav class="teal">
+  <% if (user.gravatar != "") { %>
+
+    <img src='<%= user.gravatar %>' width='32px' width='32px' style=' border-radius: 50%;margin: 15px;' />
+  <% }%>
+  
   <a href="#" class="brand-logo">Dashboard</a>
   <ul class="right hide-on-med-and-down">
     <li><a href="#!">Home</a></li>
@@ -154,6 +159,7 @@
   <!-- Modal Structure -->
 <script>
   var user = <%-JSON.stringify(user)%>
+  console.log(user);
 </script>
   <script src="/bootloader.js"></script>
 </body>
