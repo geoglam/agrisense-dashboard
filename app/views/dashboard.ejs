@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Custom Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+</head>
+<body >
+<div id="loader-wrapper">
+  <div id="loader"></div>        
+  <div class="loader-section section-left"></div>
+  <div class="loader-section section-right"></div>
+</div>
+  <nav class="teal">
+  <a href="#" class="brand-logo">Dashboard</a>
+  <ul class="right hide-on-med-and-down">
+    <li><a href="#!">Home</a></li>
+    <li><a href="/logout">Logout</a></li>
+  </ul>
+  <ul id="slide-out" class="side-nav">
+    <li><a href="#!">Home</a></li>
+    <li><a href="/logout">Logout</a></li>
+  </ul>
+  <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+</nav>
+    <div class="row">
+      <div class="col s12">
+      <div class="row">
+        <div class="col s12 m6">
+          <div class="card hoverable">
+<!--           <div class="card-content">
+          <span class="card-title black-text">Form Summaray</span>
+            
+          </div> -->
+          <div id='map'></div>
+          <div id='chart0'></div>
+          </div>
+        </div>
+        <div class="col s12 m6">
+          <div class="card-panel hoverable">
+            <div class="card-content">
+              <span class="card-title black-text">Form Summaray</span>
+                  <select>
+                    <option value="" disabled selected>Choose your option</option>
+                    <option value="1">Option 1</option>
+                    <option value="2">Option 2</option>
+                    <option value="3">Option 3</option>
+                  </select>
+
+            </div>
+          </div>
+        </div>
+                <div class="col s12 m6">
+          <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title black-text">Form Summaray</span>
+               <div id='chart2'></div>
+            </div>
+            <div class="card-action">
+              <a href="#">Download Data</a>
+            </div>
+          </div>
+        </div>
+                        <div class="col s12 m6">
+          <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title black-text">Card Title</span>
+              <p>I am a very simple card. I am good at containing small bits of information.
+              I am convenient because I require little markup to use effectively.</p>
+
+            </div>
+            <div class="card-action">
+              <a href="#">This is a link</a>
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        </div>
+
+
+                <div class="col s12 m6">
+          <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title black-text">Card Title</span>
+              <div id='chart1'></div>
+            </div>
+            <div class="card-action">
+              <a href="#">This is a link</a>
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="row">
+        <div class="col s12 m6">
+          <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title black-text">Card Title</span>
+              <div id='chart1'></div>
+            </div>
+            <div class="card-action">
+              <a href="#">This is a link</a>
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+
+
+      </div>
+
+
+    </div>
+
+     <!-- Page Layout here -->
+         <footer class="page-footer teal">
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+                <h5 class="white-text">Footer Content</h5>
+                <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+              </div>
+              <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Links</h5>
+                <ul>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+            © 2015 Copyright GeoMarvel, LLC
+            <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+            </div>
+          </div>
+        </footer>
+          <!-- Modal Trigger -->
+
+  <!-- Modal Structure -->
+<script>
+  var user = <%-JSON.stringify(user)%>
+</script>
+  <script src="/bootloader.js"></script>
+</body>
+</html>
