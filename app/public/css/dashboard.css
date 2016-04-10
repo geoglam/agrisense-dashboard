@@ -30,3 +30,5 @@
     margin: auto;
     z-index: 99999;
 }
+
+#map { height: 400px; }

@@ -32,7 +32,7 @@ passport.use(new passportLocal.Strategy(verifyCredentials));
 
 function makeBasicAuthRequest(username,password,done){
   var options = {
-  url: 'http://data.geomarvel.io/api/v1/user',
+  url: 'http://52.23.108.108/api/v1/user',
   auth: {
     user: username,
     password: password,
@@ -40,6 +40,7 @@ function makeBasicAuthRequest(username,password,done){
     }
   }
   request(options, function (err, res, body) {
+    console.log(body);
     if (err) {
       done(null)
     }
@@ -54,7 +55,7 @@ function makeBasicAuthRequest(username,password,done){
 function verifyCredentials(username, password, done) {
     makeBasicAuthRequest(username,password,function(response){
       if (response !=null){
-        var userdata = JSON.parse(response.body)
+        var userdata = JSON.parse(response.body);
         delete userdata['api_token'];
         userdata.id = userdata.username;
         done(null, userdata);
@@ -82,13 +83,7 @@ passport.deserializeUser(function(user, done) {
     done(null, user);
 });
 
-app.get('/', function(req, res) {
-    if (req.isAuthenticated()){
-      res.redirect('dashboard');
-    }else{
-        res.render('login');
-    }
-});
+
 
 app.get('/dashboard',ensureAuthenticated,function(req, res){
   res.render('dashboard',{
@@ -100,6 +95,14 @@ app.get('/dashboard',ensureAuthenticated,function(req, res){
 // app.get('/login', function(req, res) {
 //     res.render('login');
 // });
+
+app.get('/', function(req, res) {
+    if (req.isAuthenticated()){
+      res.redirect('dashboard');
+    }else{
+        res.render('login');
+    }
+});
 
 app.post('/', passport.authenticate('local'), function(req, res) {
     res.redirect('dashboard');

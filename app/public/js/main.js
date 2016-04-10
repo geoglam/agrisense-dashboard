@@ -1,6 +1,22 @@
-require(["esri/map", "dojo/domReady!"], function(Map) { 
+require(["leaflet", "dojo/domReady!"], function(L) {
 	 $(document).ready(function() {
-    $('select').material_select();
+
+
+$('select').material_select();
+		var siteObject = {
+		url:'http://data.geomarvel.io/api/v1/',
+		token:'ssfdk343434'
+		}
+		var onaClient = new OnaClient(siteObject);
+		onaClient.getForms(function(data){
+			var html = '';
+			for (var i = 0; i < data.length; i++) {
+				html += "<option>"+data[i].title+"</option>";
+			}
+			$("#formlist").html(html);
+			$('select').material_select();
+
+		});
     $(".button-collapse").sideNav();
     $('.dropdown-button').dropdown({
       inDuration: 300,
@@ -22,14 +38,14 @@ require(["esri/map", "dojo/domReady!"], function(Map) {
   });
 
 
-       
+
   });
   var getData = function(parms,callback){
 	$.ajax({
 	  	 "crossDomain": true,
 	      url:"http://data.geomarvel.io/api/v1/forms",
 	      type:"GET",
-	      headers: { 
+	      headers: {
 	        "authorization" : "TempToken "+user.temp_token,
 	      },
 	      data:parms,
@@ -38,11 +54,28 @@ require(["esri/map", "dojo/domReady!"], function(Map) {
 	    	callback(data);
 	    });
   }
-  var map = new Map("map", {
-    center: [-118, 34.5],
-    zoom: 8,
-    basemap: "gray"
-  });
+  // var map = new Map("map", {
+  //   center: [-118, 34.5],
+  //   zoom: 8,
+  //   basemap: "gray"
+  // });
+  var map = L.map('map').setView([-6.489983, 35.859375], 6);
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+
+var district_boundary = new L.geoJson();
+district_boundary.addTo(map);
+$.ajax({
+dataType: "json",
+url: "data/TZregions_2012.geojson",
+success: function(data) {
+    $(data.features).each(function(key, data) {
+        district_boundary.addData(data);
+    });
+}
+}).error(function() {});
   var data = getData({owner:user.username},function(data){
   	console.log(data);
   });

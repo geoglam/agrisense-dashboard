@@ -5,10 +5,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="http://localhost/ona-node-api/Client.js"></script>
 <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body >
@@ -35,7 +35,7 @@
       <li><a href="#!">Option3</a></li>
     </ul>
   <% }%>
-  
+
   <a href="#" class="brand-logo">Dashboard</a>
   <ul class="right hide-on-med-and-down">
     <li><a href="#!">Home</a></li>
@@ -54,7 +54,7 @@
           <div class="card hoverable">
 <!--           <div class="card-content">
           <span class="card-title black-text">Form Summaray</span>
-            
+
           </div> -->
           <div id='map'></div>
           <div id='chart0'></div>
@@ -64,7 +64,7 @@
           <div class="card-panel hoverable">
             <div class="card-content">
               <span class="card-title black-text">Form Summaray</span>
-                  <select>
+                  <select id="formlist">
                     <option value="" disabled selected>Choose your option</option>
                     <option value="1">Form 1</option>
                     <option value="2">Form 2</option>

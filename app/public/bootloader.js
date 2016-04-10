@@ -14,6 +14,7 @@
           {name: 'js', location: URL + 'js'},
         ],
         aliases: [
+          ['leaflet', 'vendor/leaflet/dist/leaflet.js']
         ],
         deps: [
           'dojo/domReady!'
@@ -22,7 +23,7 @@
         }
       }, // End dojoConfig
       src = [
-        'http://js.arcgis.com/3.13/'
+        'http://js.arcgis.com/3.15/'
       ],
       css = [{
         src: 'http://js.arcgis.com/3.13/esri/css/esri.css',
@@ -30,6 +31,9 @@
       }, {
         src: 'http://js.arcgis.com/3.13/dijit/themes/claro/claro.css',
         cdn: true
+      },{
+        src:'vendor/leaflet/dist/leaflet.css',
+        cdn:false
       }];
 
   var loadScript = function(src, async) {
