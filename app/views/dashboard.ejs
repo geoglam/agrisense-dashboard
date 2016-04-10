@@ -6,27 +6,30 @@
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="http://localhost/ona-node-api/Client.js"></script>
-<link rel="stylesheet" href="/css/dashboard.css">
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="js/Client.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/leaflet/1.0.0-beta.2/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/leaflet/1.0.0-beta.2/leaflet.js"></script>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
+  <script src="https://cdn.jsdelivr.net/leaflet.esri/2.0.0-beta.8/esri-leaflet.js"></script>
+  <link rel="stylesheet" href="/css/dashboard.css">
 </head>
-<body >
-<div id='loading'>
-  <div id='loading-box' style='text-align: center;'>
-  <p style="margin:0px;color:#929191;top:50px; position:relative; font-style: italic;">Powered By</p>
-  <img width='20%' src='/images/geomarvel-logo.png' />
-    <div class="progress">
-        <div class="indeterminate"></div>
+<body>
+  <!-- Loading Splash -->
+  <div id='loading'>
+    <div id='loading-box' style='text-align: center;'>
+    <p style="margin:0px;color:#929191;top:50px; position:relative; font-style: italic;">Powered By</p>
+    <img width='20%' src='/images/geomarvel-logo.png' />
+      <div class="progress">
+          <div class="indeterminate"></div>
+      </div>
     </div>
   </div>
-</div>
+  <!-- End Loading Splash -->
   <nav class="teal">
   <% if (user.gravatar != "") { %>
-
     <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='<%= user.gravatar %>' width='32px' width='32px' style=' border-radius: 50%;margin: 15px; box-shadow: 0px 0px 1px 1px #efefef;' /></a>
-
-    <!-- <a class='dropdown-button btn' data-beloworigin="true" href='#' data-activates='dropdown1'>Drop Me!</a> -->
     <!-- Dropdown Structure -->
     <ul id='dropdown1' class='dropdown-content' style="maring-left:20px">
       <li><a href="#!">Option1</a></li>
@@ -34,8 +37,7 @@
       <li class="divider"></li>
       <li><a href="#!">Option3</a></li>
     </ul>
-  <% }%>
-
+  <% } %>
   <a href="#" class="brand-logo">Dashboard</a>
   <ul class="right hide-on-med-and-down">
     <li><a href="#!">Home</a></li>
@@ -47,6 +49,7 @@
   </ul>
   <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
 </nav>
+<!-- En of Nav -->
     <div class="row">
       <div class="col s12">
       <div class="row">
@@ -177,6 +180,29 @@
   var user = <%-JSON.stringify(user)%>
   console.log(user);
 </script>
-  <script src="/bootloader.js"></script>
+<script>
+  var version = '0.0.1',
+  pathname = location.pathname.replace(/\/[^/]+$/, ''),
+  URL = pathname + (pathname.substr(-1) !== '/' ? '/' : ''),
+  dojoConfig = {
+    parseOnLoad: false,
+    isDebug: false,
+    async: true,
+    cacheBust: 'v=' + version,
+    packages: [
+      { name: 'js', location: URL + 'js' },
+    ],
+    aliases: [
+      ['leaflet', 'vendor/leaflet/dist/leaflet.js']
+    ],
+    deps: [
+      'dojo/domReady!'
+    ],
+    callback: function() { require(['js/main']);
+    }
+  };
+</script>
+<script src="https://js.arcgis.com/3.16/"></script>
+  <!-- <script src="/bootloader.js"></script> -->
 </body>
 </html>
