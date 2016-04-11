@@ -10,9 +10,9 @@
   <script src="https://code.highcharts.com/modules/exporting.js"></script>
   <script src="js/Client.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/leaflet/1.0.0-beta.2/leaflet.css" />
-  <script src="https://cdn.jsdelivr.net/leaflet/1.0.0-beta.2/leaflet.js"></script>
+
   <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
-  <script src="https://cdn.jsdelivr.net/leaflet.esri/2.0.0-beta.8/esri-leaflet.js"></script>
+  <script src="/vendor/lodash/dist/lodash.js"></script>
   <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body>
@@ -68,26 +68,22 @@
             <div class="card-content">
               <span class="card-title black-text">Form Summaray</span>
                   <select id="formlist">
-                    <option value="" disabled selected>Choose your option</option>
-                    <option value="1">Form 1</option>
-                    <option value="2">Form 2</option>
-                    <option value="3">Form 3</option>
+                    <option value="1">In Season Assessment</option>
+                    <option value="2">Pre Season Assessment</option>
+                    <option value="3">End of Season Assessment</option>
                   </select>
-<!--                   <a class="waves-effect waves-light btn">Stuff</a>
-<a class="waves-effect waves-light btn"><i class="material-icons left">cloud</i>button</a>
-<a class="waves-effect waves-light btn"><i class="material-icons right">cloud</i>button</a> -->
 
             </div>
           </div>
         </div>
                 <div class="col s12 m6">
-          <div class="card hoverable">
+          <div class="card-panel hoverable">
             <div class="card-content">
-              <span class="card-title black-text">Form Summaray</span>
+              <span class="card-title black-text">Select District</span>
                <div id='chart2'></div>
-            </div>
-            <div class="card-action">
-              <a href="#">Download Data</a>
+               <select id="districts">
+                 <option value="all">All</option>
+               </select>
             </div>
           </div>
         </div>
@@ -192,9 +188,6 @@
     packages: [
       { name: 'js', location: URL + 'js' },
     ],
-    aliases: [
-      ['leaflet', 'vendor/leaflet/dist/leaflet.js']
-    ],
     deps: [
       'dojo/domReady!'
     ],
@@ -202,7 +195,9 @@
     }
   };
 </script>
-<script src="https://js.arcgis.com/3.16/"></script>
+<script src="https://cdn.jsdelivr.net/leaflet/1.0.0-beta.2/leaflet.js" async></script>
+<script src="https://cdn.jsdelivr.net/leaflet.esri/2.0.0-beta.8/esri-leaflet.js" async></script>
+<script src="https://js.arcgis.com/3.16/" async></script>
   <!-- <script src="/bootloader.js"></script> -->
 </body>
 </html>
