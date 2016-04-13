@@ -1,5 +1,9 @@
 require([], function() {
 	var onaClient;
+	var district_boundary = new L.geoJson();
+	var end_of_season_assessment = new L.geoJson();
+	var in_season_assessment = new L.geoJson();
+	var pre_season_assessment = new L.geoJson();
 	//agrisense
 	//Jambula
 	function getAllForms(){
@@ -15,6 +19,16 @@ require([], function() {
 
 	function resetMasterialSelect(){
 		$('select').material_select();
+		$('#districts').change(function(){
+			if ($(this).val() == "all") {
+				generateCropTypeChart("*");
+				generateMaizeDevelopmentStage("*");
+			}else{
+				generateCropTypeChart($(this).val());
+				generateMaizeDevelopmentStage($(this).val());
+			}
+
+		})
 	}
 
 	function stopSplashScreen(){
@@ -27,9 +41,10 @@ require([], function() {
 	}
 
 	function addGeoJSON(url, geojson){
-		$.ajax({
+		var request = $.ajax({
 			dataType: "json",
 			url: url,
+			async:false,
 			success: function(data) {
 		  	$(data.features).each(function(key, data) {
 		        geojson.addData(data);
@@ -41,30 +56,145 @@ require([], function() {
 		console.log(value);
 	}
 
-	function setDistrictsItems(url){
-		$.ajax({
-			dataType: "json",
-			url: url,
-			success: function(data) {
-				var html = "<option>All</option>";
-				var districts =[]
-		  	$(data.features).each(function(key, data) {
-						districts.push(data.properties.District);
-						// html += "<option>"+data.properties.District+"</option>";
+	function setDistrictsItems(){
+		var form = $('#formlist').val();
+		if (form == 'in'){
+			var districts = _.uniq(in_season_assessment.getLayers().map(function(row){
+				row.feature.properties
+				return row.feature.properties.District ? row.feature.properties.District : 'other';
+			}));
+			var html = "<option value='all'>All</option>";
+			districts.sort();
+			$(districts).each(function(key,data){
+				html += "<option value='"+data+"'>"+data+"</option>";
+			})
+			$("#districts").html(html);
+			$("#districts").material_select();
+		}
+	}
+
+	function getData(district,field){
+		var data = []
+		if (district == "*"){
+			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.select_med})
+		}else{
+			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
+			data = data.map(function(row){return row.feature.properties[field]})
+		}
+		return data
+	}
+
+	function generateMaizeDevelopmentStage(district){
+		var data = getData(district,"select_med");
+		data = data.filter(function(row){
+			return row != "n/a"
+		})
+		var total = data.length;
+
+		var uniq = _.uniq(data);
+		// (_.countBy(data)[row]/total)*100
+		var chart_data = uniq.map(function(row){
+			return ((_.countBy(data)[row])/total) *100
+		})
+
+		console.log(chart_data);
+
+		$('#chart2').highcharts({
+		        chart: {
+		            type: 'bar'
+		        },
+		        title: {
+		            text: 'Maize Development Stage'
+		        },
+		        xAxis: {
+		            categories: uniq,
+		            title: {
+		                text: null
+		            }
+		        },
+		        yAxis: {
+		            min: 0,
+		            title: {
+		                text: '',
+		                align: 'high'
+		            },
+		            labels: {
+		                overflow: 'justify'
+		            }
+		        },
+		        tooltip: {
+		            valueSuffix: ' percentage'
+		        },
+		        plotOptions: {
+		            bar: {
+		                dataLabels: {
+		                    enabled: true
+		                }
+		            }
+		        },
+		        legend: {
+		            layout: 'vertical',
+								enabled:false,
+		            align: 'right',
+		            verticalAlign: 'top',
+		            x: -40,
+		            y: 80,
+		            floating: true,
+		            borderWidth: 1,
+		            backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+		            shadow: true
+		        },
+		        credits: {
+		            enabled: false
+		        },
+		        series: [{
+		            data: chart_data
+		        }]
 		    });
-				districts.sort();
-				// view-source:http://techslides.com/demos/leaflet/leaflet-country-zoom.html
-				$(districts).each(function(key,data){
-					html += "<option value='"+data+"'>"+data+"</option>";
-				})
-				$("#districts").html(html);
-				$('#districts').change(function(){
-					districtsChange(this.value)
-					// actions.changeVillage(this.value)
-				});
-				$('select').material_select();
-			}
-		}).error(function() {});
+
+
+		// var data;
+		// if (district == "*"){
+		// 	data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.select_med})
+		// }else{
+		// 	data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
+		// 	data = data.map(function(row){return row.feature.properties.select_med})
+		// }
+		// console.log(data)
+	}
+
+	function generateCropTypeChart(district){
+		var data;
+		if (district == "*"){
+			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.agricultur})
+		}else{
+			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
+			data = data.map(function(row){return row.feature.properties.agricultur})
+		}
+		var unique_crops = _.uniq(data);
+		var chartData = unique_crops.map(function(row){
+			return {
+			 	name:row,
+			 	y:_.countBy(data)[row],
+			 }
+		})
+
+		$('#chart1').highcharts({
+	        chart: {plotBackgroundColor: null,plotBorderWidth: null,plotShadow: false,type: 'pie'},
+	        title: {text: 'Crop Types'},
+	        tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
+	        plotOptions: {pie: {allowPointSelect: true,cursor: 'pointer',dataLabels: {enabled: true,format: '<b>{point.name}</b>: {point.y}',style: {color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'}}}},
+					credits: {enabled: false},
+					series: [{
+	            name: 'Crops',
+	            colorByPoint: true,
+	            data:chartData
+	        }]
+	    });
+
+	}
+	function loadCharts(){
+		debugger
 	}
 	function initMap(){
 		var map = L.map('map').setView([-6.489983, 35.859375], 6);
@@ -72,80 +202,38 @@ require([], function() {
 	    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 		}).addTo(map);
 
-		var district_boundary = new L.geoJson();
 		district_boundary.addTo(map);
 		addGeoJSON("data/TZdistricts_2012.geojson",district_boundary);
-		setDistrictsItems('data/TZdistricts_2012.geojson')
 
-		var end_of_season_assessment = new L.geoJson();
 		end_of_season_assessment.addTo(map);
 		addGeoJSON("data/disctrict_join_end_of_season_assessment.geojson",end_of_season_assessment);
 
-		var in_season_assessment = new L.geoJson();
 		in_season_assessment.addTo(map);
 		addGeoJSON("data/disctrict_join_in_season_assessment.geojson",in_season_assessment);
 
-		var pre_season_assessment = new L.geoJson();
 		pre_season_assessment.addTo(map);
 		addGeoJSON("data/district_join_pre_season_assessment.geojson",pre_season_assessment);
 
-		$.ajax({
-			dataType: "json",
-			url: 'data/disctrict_join_in_season_assessment.geojson',
-			success: function(data) {
-				var crops = []
-
-				$(data.features).each(function(key, data) {
-					crops.push(data.properties.agricultur);
-				});
-				unique_crops = _.uniq(crops);
-				chart_object = []
-				for (var i = 0; i < unique_crops.length; i++) {
-
-					 var obj = {
-						name:unique_crops[i],
-						y:_.countBy(crops)[unique_crops[i]],
-						}
-					chart_object.push(obj);
-				}
-
-				$('#chart1').highcharts({
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false,
-            type: 'pie'
-        },
-        title: {
-            text: 'Crop Types'
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.y}',
-                    style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                    }
-                }
-            }
-        },
-        series: [{
-            name: 'Crops',
-            colorByPoint: true,
-            data:chart_object
-        }]
-    });
-
-
-
-			}
-		}).error(function() {});
+		// $.ajax({
+		// 	dataType: "json",
+		// 	url: 'data/disctrict_join_in_season_assessment.geojson',
+		// 	success: function(data) {
+		// 		var crops = []
+		// 		$(data.features).each(function(key, data) {
+		// 			crops.push(data.properties.agricultur);
+		// 		});
+		// 		unique_crops = _.uniq(crops);
+		// 		chart_object = []
+		// 		for (var i = 0; i < unique_crops.length; i++) {
+		// 			 var obj = {
+		// 				name:unique_crops[i],
+		// 				y:_.countBy(crops)[unique_crops[i]],
+		// 				}
+		// 			chart_object.push(obj);
+		// 		}
+		//
+		// 	}
+		// }).error(function() {});
 		  // var data = getData({owner:user.username},function(data){
 		  // 	console.log(data);
 		  // });
@@ -171,6 +259,9 @@ require([], function() {
 
 		stopSplashScreen();
 		initMap();
+		setDistrictsItems();
+		generateCropTypeChart("*");
+		generateMaizeDevelopmentStage("*");
 		// getAllForms();
 
 	}

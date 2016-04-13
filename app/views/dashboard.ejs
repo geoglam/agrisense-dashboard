@@ -55,55 +55,63 @@
       <div class="row">
         <div class="col s12 m6">
           <div class="card hoverable">
-<!--           <div class="card-content">
-          <span class="card-title black-text">Form Summaray</span>
-
-          </div> -->
           <div id='map'></div>
           <div id='chart0'></div>
           </div>
         </div>
         <div class="col s12 m6">
-          <div class="card-panel hoverable">
+          <div class="card-panel hoverable" >
             <div class="card-content">
-              <span class="card-title black-text">Form Summaray</span>
+                <span class="card-title black-text" style="font-weight: bold;">Survey: </span>
                   <select id="formlist">
-                    <option value="1">In Season Assessment</option>
-                    <option value="2">Pre Season Assessment</option>
-                    <option value="3">End of Season Assessment</option>
+                    <option value="in">In Season Assessment</option>
+                    <!-- <option value="pre">Pre Season Assessment</option>
+                    <option value="end">End of Season Assessment</option> -->
                   </select>
 
+                  <span class="card-title black-text"style="font-weight: bold;">District: </span>
+                  <select id="districts">
+                    <option value="all">All</option>
+                  </select>
             </div>
           </div>
         </div>
-                <div class="col s12 m6">
+
+        <div class="col s12 m6">
+          <div class="card hoverable">
+            <div class="card-content">
+              <div id='chart1' style="height: 300px;"></div>
+            </div>
+            <!-- <div class="card-action">
+              <a href="#">This is a link</a>
+              <a href="#">This is a link</a>
+            </div> -->
+          </div>
+        </div>
+        <div class="col s12 m6">
           <div class="card-panel hoverable">
             <div class="card-content">
-              <span class="card-title black-text">Select District</span>
                <div id='chart2'></div>
-               <select id="districts">
-                 <option value="all">All</option>
-               </select>
             </div>
           </div>
         </div>
-                        <div class="col s12 m6">
+
+        <!-- <div class="col s12 m6">
           <div class="card hoverable">
             <div class="card-content">
               <span class="card-title black-text">Card Title</span>
               <p>I am a very simple card. I am good at containing small bits of information.
               I am convenient because I require little markup to use effectively.</p>
-
             </div>
             <div class="card-action">
               <a href="#">This is a link</a>
               <a href="#">This is a link</a>
             </div>
           </div>
-        </div>
+        </div> -->
 
 
-                <div class="col s12 m6">
+        <!-- <div class="col s12 m6">
           <div class="card hoverable">
             <div class="card-content">
               <span class="card-title black-text">Card Title</span>
@@ -114,8 +122,9 @@
               <a href="#">This is a link</a>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
+      <!-- End of row -->
 
 
 
@@ -124,18 +133,17 @@
           <div class="card hoverable">
             <div class="card-content">
               <span class="card-title black-text">Card Title</span>
-              <div id='chart1'></div>
+              <!-- <div id='chart1'></div> -->
             </div>
-            <div class="card-action">
+            <!-- <div class="card-action">
               <a href="#">This is a link</a>
               <a href="#">This is a link</a>
-            </div>
+            </div> -->
           </div>
         </div>
-
-
-
       </div>
+
+      <!--End of row  -->
 
 
       </div>
