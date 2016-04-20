@@ -19,8 +19,7 @@
   <!-- Loading Splash -->
   <div id='loading'>
     <div id='loading-box' style='text-align: center;'>
-    <p style="margin:0px;color:#929191;top:50px; position:relative; font-style: italic;">Powered By</p>
-    <img width='20%' src='/images/geomarvel-logo.png' />
+    <img width='20%' src='/images/malf-logo.png' />
       <div class="progress">
           <div class="indeterminate"></div>
       </div>
@@ -29,16 +28,17 @@
   <!-- End Loading Splash -->
   <nav class="teal">
   <% if (user.gravatar != "") { %>
-    <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='<%= user.gravatar %>' width='32px' width='32px' style=' border-radius: 50%;margin: 15px; box-shadow: 0px 0px 1px 1px #efefef;' /></a>
+    <!-- <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='<%= user.gravatar %>' width='32px' width='32px' style=' border-radius: 50%;margin: 15px; box-shadow: 0px 0px 1px 1px #efefef;' /></a> -->
+    <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='./images/malf-logo.png' width='60px' width='60px' style=' border-radius: 50%;margin: 10px;' /></a>
     <!-- Dropdown Structure -->
-    <ul id='dropdown1' class='dropdown-content' style="maring-left:20px">
+    <!-- <ul id='dropdown1' class='dropdown-content' style="maring-left:20px">
       <li><a href="#!">Option1</a></li>
       <li><a href="#!">Option2</a></li>
       <li class="divider"></li>
       <li><a href="#!">Option3</a></li>
-    </ul>
+    </ul> -->
   <% } %>
-  <a href="#" class="brand-logo">Dashboard</a>
+  <a href="#" class="brand-logo" style="font-size: 20px;">Agrisense Dashboard</a>
   <ul class="right hide-on-med-and-down">
     <li><a href="#!">Home</a></li>
     <li><a href="/logout">Logout</a></li>
@@ -163,16 +163,16 @@
           <div class="container">
             <div class="row">
               <div class="col l6 s12">
-                <h5 class="white-text">Footer Content</h5>
-                <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+                <!-- <h5 class="white-text">Footer Content</h5> -->
+                <p class="grey-text text-lighten-4"></p>
               </div>
               <div class="col l4 offset-l2 s12">
-                <h5 class="white-text">Links</h5>
+                <!-- <h5 class="white-text">Links</h5> -->
                 <ul>
-                  <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
-                  <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
-                  <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
-                  <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                  <li><a class="grey-text text-lighten-3" href="www.agrisense.org ">Agrisense</a></li>
+                  <li><a class="grey-text text-lighten-3" href="www.stars-project.org">STARS Project</a></li>
+                  <li><a class="grey-text text-lighten-3" href="www.geoglam-crop-monitor.org">GEOGLAM</a></li>
+                  <li><a class="grey-text text-lighten-3" href="www.geoodk.com">GeoODK</a></li>
                 </ul>
               </div>
             </div>
