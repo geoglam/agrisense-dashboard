@@ -10,6 +10,17 @@
      opacity: 1;
 
 }
+#basemaps-wrapper {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 400;
+	background: white;
+	/*padding: 10px;*/
+}
+#basemaps {
+	margin-bottom: 5px;
+}
 .caret{
        top: 0px !important;
 			 color:white !important;

@@ -1,13 +1,52 @@
 require([], function() {
 	var onaClient;
-	var district_boundary = new L.geoJson();
+	var geojsonMarkerOptions = {
+			radius: 8,
+			fillColor: "#009688",
+			color: "#fff",
+			weight: 1,
+			opacity: 1,
+			fillOpacity: 0.8
+	};
+	var myStyle = {
+    "color": "#635B5B",
+    "weight": 2,
+    "opacity": 9,
+		"fillOpacity": 0,
+};
+	var district_boundary = new L.geoJson(null,{
+		style: myStyle,
+		onEachFeature: function (feature, layer) {
+			var html = "";
+			html += "<b>District:</b> " + feature.properties.District + "<br/>"
+			layer.bindPopup(html);
+		}
+	});
 	var end_of_season_assessment = new L.geoJson();
-	var in_season_assessment = new L.geoJson();
+	var in_season_assessment = new L.geoJson(null,{
+		pointToLayer: function (feature, latlng) {
+			return L.circleMarker(latlng, geojsonMarkerOptions);
+		},
+		onEachFeature: function (feature, layer) {
+			var html = ""
+			html += "<b>District:</b> " + feature.properties.District + "<br/>"
+			html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
+			html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
+			if (feature.properties.crop_con_7 !="n/a"){
+			html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_7.split(".")[0]+".jpg' />"  +"<br/>"
+			}
+
+			layer.bindPopup(html);
+		}
+	});
 	var pre_season_assessment = new L.geoJson();
 	var map;
 	var gData;
+	var layer;
+	var layerLabels;
+	var current_district_data = new L.geoJson(
 
-	var current_district_data = new L.geoJson();;
+	);
 	//agrisense
 	//Jambula
 	function getAllForms(){
@@ -59,20 +98,28 @@ require([], function() {
 	}
 
 	function setMapDataToDistrict(district){
-		// var temp = in_season_assessment.getLayers().filter(function(row){
-		// 	return row.feature.properties.District == district
-		// });
-
 		current_district_data = L.geoJson(gData, {
+			pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, geojsonMarkerOptions);
+    	},
 			filter: function(feature, layer) {
 					return feature.properties.District == district;
+			},
+			onEachFeature: function (feature, layer) {
+				var html = ""
+				html += "<b>District:</b> " + feature.properties.District + "<br/>"
+				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
+				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
+				if (feature.properties.crop_con_7 !="n/a"){
+				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_7.split(".")[0]+".jpg' />"  +"<br/>"
+				}
+
+				layer.bindPopup(html);
 			}
 		});
-		 map.fitBounds(current_district_data.getBounds());
-
+		map.fitBounds(current_district_data.getBounds());
+		//map.addLayer(current_district_data);
 		current_district_data.addTo(map);
-
-
 	}
 	function stopSplashScreen(){
 		$( "#loading" ).animate({
@@ -561,11 +608,53 @@ require([], function() {
 	function loadCharts(){
 		debugger
 	}
+	function setBasemap(basemap) {
+	if (layer) {
+		map.removeLayer(layer);
+	}
+
+	layer = L.esri.basemapLayer(basemap);
+
+	map.addLayer(layer);
+
+	if (layerLabels) {
+		map.removeLayer(layerLabels);
+	}
+
+	if (basemap === 'ShadedRelief'
+	 || basemap === 'Oceans'
+	 || basemap === 'Gray'
+	 || basemap === 'DarkGray'
+	 || basemap === 'Imagery'
+	 || basemap === 'Terrain'
+ ) {
+		layerLabels = L.esri.basemapLayer(basemap + 'Labels');
+		map.addLayer(layerLabels);
+	}
+}
+function changeBasemap(basemap){
+	setBasemap(basemap);
+}
 	function initMap(){
-		map = L.map('map').setView([-6.489983, 35.859375], 6);
-		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-	    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-		}).addTo(map);
+		map = L.map('map',{
+			fullscreenControl: true,
+			// OR
+			fullscreenControl: {
+					pseudoFullscreen: false // if true, fullscreen to page width and height
+			}
+		}).setView([-6.489983, 35.859375], 6);
+		layer = L.esri.basemapLayer('Topographic').addTo(map);
+		// L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	  //   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+		// }).addTo(map);
+		map.on('fullscreenchange', function () {
+			if (map.isFullscreen()) {
+			    console.log('entered fullscreen');
+			} else {
+			    console.log('exited fullscreen');
+			}
+		});
+
 
 		current_district_data.addTo(map);
 
@@ -602,6 +691,10 @@ require([], function() {
 			belowOrigin: true,
 			alignment: 'right'
 		});
+
+		$("#basemaps").change(function(){
+			changeBasemap(this.value);
+		})
 
 
 		stopSplashScreen();

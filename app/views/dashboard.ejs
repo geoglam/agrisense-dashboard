@@ -79,6 +79,18 @@
         <div class="col s12 m6">
           <div class="card hoverable">
             <div style="z-index:9;" id='map'></div>
+            <div id="basemaps-wrapper" class="leaflet-bar" style="width:200px">
+              <select class="browser-default" name="basemaps" id="basemaps">
+                <option value="Topographic">Topographic<options>
+                <option value="Streets">Streets</option>
+                <option value="NationalGeographic">National Geographic<options>
+                <option value="Oceans">Oceans<options>
+                <option value="Gray">Gray<options>
+                <option value="DarkGray">Dark Gray<options>
+                <option value="Imagery">Imagery<options>
+                <option value="ShadedRelief">Shaded Relief<options>
+              </select>
+            </div>
           </div>
           <div class="card hoverable">
             <div id='chart0' style="float:left;width:200px;height:200px;margin-left:50px;"></div>
@@ -141,6 +153,15 @@
           <div class="container">
             <div class="row">
               <div class="col l6 s12">
+                <div class="col s3 m3 l4">
+                  <img width="80px" src="./images/UMDLogo.jpg" />
+                </div>
+                <div class="col s3 m3 l4">
+                  <img width="80px" src="./images/SUALogo_hires.png" />
+                </div>
+                <div class="col s3 m3 l4">
+                  <img width="80px" src="./images/STARS_LOGO_L_cr.jpg" />
+                </div>
                 <!-- <h5 class="white-text">Footer Content</h5> -->
                 <p class="grey-text text-lighten-4"></p>
               </div>
@@ -190,6 +211,8 @@
 </script>
 <script src="https://cdn.jsdelivr.net/leaflet/1.0.0-beta.2/leaflet.js" async></script>
 <script src="https://cdn.jsdelivr.net/leaflet.esri/2.0.0-beta.8/esri-leaflet.js" async></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js' async></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
 <script src="https://js.arcgis.com/3.16/" async></script>
   <!-- <script src="/bootloader.js"></script> -->
 </body>
