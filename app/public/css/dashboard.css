@@ -7,8 +7,18 @@
     background: #EFEFEF;
     z-index: 999;
     transition: all 1s linear;
-     opacity: 1; 
+     opacity: 1;
 
+}
+.caret{
+       top: 0px !important;
+			 color:white !important;
+}
+nav{
+	height:initial !important;
+}
+nav ul li:hover, nav ul li.active{
+	background-color: transparent;
 }
 
 .progress{
@@ -32,3 +42,8 @@
 }
 
 #map { height: 400px; }
+@media only screen and (max-width : 992px) {
+	.navbar-fixed{
+			height: 200px
+	}
+}

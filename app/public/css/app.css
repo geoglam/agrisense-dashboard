@@ -11,6 +11,13 @@ body {
     vertical-align: middle;
 }
 
+.backgroundColor{
+  background-color: #4B827D !important
+}
+.caret{
+       top: 0px !important;
+}
+
 #loading{
 	position: absolute;
     top: 0;

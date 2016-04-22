@@ -4,6 +4,10 @@ require([], function() {
 	var end_of_season_assessment = new L.geoJson();
 	var in_season_assessment = new L.geoJson();
 	var pre_season_assessment = new L.geoJson();
+	var map;
+	var gData;
+
+	var current_district_data = new L.geoJson();;
 	//agrisense
 	//Jambula
 	function getAllForms(){
@@ -19,7 +23,10 @@ require([], function() {
 
 	function resetMasterialSelect(){
 		$('select').material_select();
+
 		$('#districts').change(function(){
+			map.removeLayer(in_season_assessment);
+			map.removeLayer(current_district_data);
 			if ($(this).val() == "all") {
 				generateCropTypeChart("*");
 				generateMaizeDevelopmentStage("*");
@@ -27,7 +34,13 @@ require([], function() {
 				generateIrrigated("*");
 				generateWeeded("*");
 				farmerAssessmentCondition("*");
-				generateMaizeFoodPriceChart("*")
+				generateMaizeFoodPriceChart("*");
+				generateFoodPriceRice("*");
+				generateFoodPriceCassava("*");
+				generateFoodPriceBeans("*");
+				in_season_assessment.addTo(map);
+				map.fitBounds(in_season_assessment.getBounds());
+
 			}else{
 				generateCropTypeChart($(this).val());
 				generateMaizeDevelopmentStage($(this).val());
@@ -36,11 +49,31 @@ require([], function() {
 				generateWeeded($(this).val());
 				farmerAssessmentCondition($(this).val());
 				generateMaizeFoodPriceChart($(this).val());
+				generateFoodPriceRice($(this).val());
+				generateFoodPriceCassava($(this).val());
+				generateFoodPriceBeans($(this).val());
+				setMapDataToDistrict($(this).val());
 			}
 
 		})
 	}
 
+	function setMapDataToDistrict(district){
+		// var temp = in_season_assessment.getLayers().filter(function(row){
+		// 	return row.feature.properties.District == district
+		// });
+
+		current_district_data = L.geoJson(gData, {
+			filter: function(feature, layer) {
+					return feature.properties.District == district;
+			}
+		});
+		 map.fitBounds(current_district_data.getBounds());
+
+		current_district_data.addTo(map);
+
+
+	}
 	function stopSplashScreen(){
 		$( "#loading" ).animate({
 				opacity: 0,
@@ -56,14 +89,12 @@ require([], function() {
 			url: url,
 			async:false,
 			success: function(data) {
+				gData = data;
 		  	$(data.features).each(function(key, data) {
 		        geojson.addData(data);
 		    });
 			}
 		}).error(function() {});
-	}
-	function districtsChange(value){
-		console.log(value);
 	}
 
 	function setDistrictsItems(){
@@ -190,7 +221,6 @@ require([], function() {
 				}
 			}else{
 				if (data[i] > low & data[i] <= high){
-					// console.log("YES: "+ data[i])
 					count = count + 1
 				}
 			}
@@ -198,6 +228,165 @@ require([], function() {
 		}
 		return count
 	}
+	function generateFoodPriceBeans(district){
+		var bins = [800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800]
+		var step = 200
+
+		if (district == "*"){
+			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.food_pri_3})
+		}else{
+			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
+			data = data.map(function(row){return row.feature.properties.food_pri_3})
+		}
+
+
+		data = data.filter(function(row){
+			return row !="n/a"
+		});
+
+
+
+		var total = data.length -1;
+		var binStep = 0;
+		var binCounts = []
+		for (var i = 0; i < bins.length-1; i++) {
+			var high = bins[i]
+			var low = bins[i] - step
+			var binCount = (countInRange(data,high,low,binStep)/total)*100
+			binCounts.push([bins[i],binCount]);
+			binStep = binStep+1;
+		}
+		$('#chart9').highcharts({
+				chart: {type: 'column'},
+				title: {text: 'Food Prices Beans'},
+				xAxis: {type: 'category',title:{text:"Food Prices Beans"},labels: {rotation: -45,style: {fontSize: '13px',fontFamily: 'Verdana, sans-serif'}}},
+				yAxis: {min: 0,title: {text: 'Frequency in percentage'}},
+				legend: {enabled: false},
+				credits: {enabled: false},
+				tooltip: {pointFormat: 'Food Prices Beans <b>{point.y:.1f}%</b>'},
+				series: [{
+						name: 'Food Prices Beans',
+						data: binCounts,
+						dataLabels: {
+								enabled: true,
+								rotation: 0,
+								color: '#FFFFFF',
+								align: 'right',
+								format: '{point.y:.1f}%', // one decimal
+								y: 10, // 10 pixels down from the top
+								style: {
+										fontSize: '13px',
+										fontFamily: 'Verdana, sans-serif'
+								}
+						}
+				}]
+		});
+	}
+
+	function generateFoodPriceCassava(district){
+		var bins = [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700]
+		var step = 100
+
+		if (district == "*"){
+			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.food_pri_2})
+		}else{
+			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
+			data = data.map(function(row){return row.feature.properties.food_pri_2})
+		}
+
+		data = data.filter(function(row){
+			return row !="n/a"
+		});
+
+		var total = data.length -1;
+		var binStep = 0;
+		var binCounts = []
+		for (var i = 0; i < bins.length-1; i++) {
+			var high = bins[i]
+			var low = bins[i] - step
+			var binCount = (countInRange(data,high,low,binStep)/total)*100
+			binCounts.push([bins[i],binCount]);
+			binStep = binStep+1;
+		}
+		$('#chart8').highcharts({
+				chart: {type: 'column'},
+				title: {text: 'Food Prices Cassava'},
+				xAxis: {type: 'category',title:{text:"Food Prices Cassava"},labels: {rotation: -45,style: {fontSize: '13px',fontFamily: 'Verdana, sans-serif'}}},
+				yAxis: {min: 0,title: {text: 'Frequency in percentage'}},
+				legend: {enabled: false},
+				credits: {enabled: false},
+				tooltip: {pointFormat: 'Food Prices Cassava <b>{point.y:.1f}%</b>'},
+				series: [{
+						name: 'Food Prices Cassava',
+						data: binCounts,
+						dataLabels: {
+								enabled: true,
+								rotation: 0,
+								color: '#FFFFFF',
+								align: 'right',
+								format: '{point.y:.1f}%', // one decimal
+								y: 10, // 10 pixels down from the top
+								style: {
+										fontSize: '13px',
+										fontFamily: 'Verdana, sans-serif'
+								}
+						}
+				}]
+		});
+	}
+
+	function generateFoodPriceRice(district){
+		var bins = [200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000]
+		var step = 200
+
+		if (district == "*"){
+			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.food_pri_1})
+		}else{
+			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
+			data = data.map(function(row){return row.feature.properties.food_pri_1})
+		}
+
+		data = data.filter(function(row){
+			return row !="n/a"
+		});
+
+		var total = data.length -1;
+		var binStep = 0;
+		var binCounts = []
+		for (var i = 0; i < bins.length-1; i++) {
+			var high = bins[i]
+			var low = bins[i] - step
+			var binCount = (countInRange(data,high,low,binStep)/total)*100
+			binCounts.push([bins[i],binCount]);
+			binStep = binStep+1;
+		}
+		$('#chart4').highcharts({
+				chart: {type: 'column'},
+				title: {text: 'Food Prices Rice'},
+				xAxis: {type: 'category',title:{text:"Food Prices Rice"},labels: {rotation: -45,style: {fontSize: '13px',fontFamily: 'Verdana, sans-serif'}}},
+				yAxis: {min: 0,title: {text: 'Frequency in percentage'}},
+				legend: {enabled: false},
+				credits: {enabled: false},
+				tooltip: {pointFormat: 'Food Prices Rice <b>{point.y:.1f}%</b>'},
+				series: [{
+						name: 'Food Prices Rice',
+						data: binCounts,
+						dataLabels: {
+								enabled: true,
+								rotation: 0,
+								color: '#FFFFFF',
+								align: 'right',
+								format: '{point.y:.1f}%', // one decimal
+								y: 10, // 10 pixels down from the top
+								style: {
+										fontSize: '13px',
+										fontFamily: 'Verdana, sans-serif'
+								}
+						}
+				}]
+		});
+	}
+
 	function generateMaizeHeightChart(district){
 		var bins = [0.5,1.0,1.5,2.0,2.5,3.0,4.0,5.0,6.0]
 		var step = 0.5
@@ -246,9 +435,6 @@ require([], function() {
             }
         }]
     });
-
-
-
 	}
 	function generateMaizeFoodPriceChart(district){
 		var bins = [300,400,500,600,700,800,900,1000,1500,2000]
@@ -277,8 +463,7 @@ require([], function() {
 			binCounts.push([bins[i],binCount]);
 			binStep = binStep+1;
 		}
-		// console.log(temp)
-		// console.log(total)
+
 		$('#chart7').highcharts({
         chart: {type: 'column'},
         title: {text: 'Food Prices Maize'},
@@ -377,22 +562,26 @@ require([], function() {
 		debugger
 	}
 	function initMap(){
-		var map = L.map('map').setView([-6.489983, 35.859375], 6);
+		map = L.map('map').setView([-6.489983, 35.859375], 6);
 		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 	    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 		}).addTo(map);
 
+		current_district_data.addTo(map);
+
 		district_boundary.addTo(map);
 		addGeoJSON("data/TZdistricts_2012.geojson",district_boundary);
 
-		end_of_season_assessment.addTo(map);
-		addGeoJSON("data/disctrict_join_end_of_season_assessment.geojson",end_of_season_assessment);
+		// end_of_season_assessment.addTo(map);
+		// addGeoJSON("data/disctrict_join_end_of_season_assessment.geojson",end_of_season_assessment);
 
 		in_season_assessment.addTo(map);
 		addGeoJSON("data/disctrict_join_in_season_assessment.geojson",in_season_assessment);
+		map.fitBounds(in_season_assessment.getBounds());
 
-		pre_season_assessment.addTo(map);
-		addGeoJSON("data/district_join_pre_season_assessment.geojson",pre_season_assessment);
+		// current_district_data.addTo(map);
+		// pre_season_assessment.addTo(map);
+		// addGeoJSON("data/disctrict_join_in_season_assessment.geojson",current_district_data);
 
 	}
 
@@ -414,6 +603,7 @@ require([], function() {
 			alignment: 'right'
 		});
 
+
 		stopSplashScreen();
 		initMap();
 		setDistrictsItems();
@@ -424,6 +614,9 @@ require([], function() {
 		generateWeeded("*");
 		farmerAssessmentCondition("*");
 		generateMaizeFoodPriceChart("*");
+		generateFoodPriceRice("*");
+		generateFoodPriceCassava("*");
+		generateFoodPriceBeans("*")
 		// getAllForms();
 
 	}

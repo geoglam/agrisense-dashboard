@@ -3,6 +3,7 @@
 <head>
   <title>Custom Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -26,36 +27,58 @@
     </div>
   </div>
   <!-- End Loading Splash -->
+<div class="teal navbar-fixed nav-wrapper">
+
   <nav class="teal">
-  <% if (user.gravatar != "") { %>
-    <!-- <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='<%= user.gravatar %>' width='32px' width='32px' style=' border-radius: 50%;margin: 15px; box-shadow: 0px 0px 1px 1px #efefef;' /></a> -->
-    <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='./images/malf-logo.png' width='60px' width='60px' style=' border-radius: 50%;margin: 10px;' /></a>
-    <!-- Dropdown Structure -->
-    <!-- <ul id='dropdown1' class='dropdown-content' style="maring-left:20px">
-      <li><a href="#!">Option1</a></li>
-      <li><a href="#!">Option2</a></li>
-      <li class="divider"></li>
-      <li><a href="#!">Option3</a></li>
-    </ul> -->
-  <% } %>
-  <a href="#" class="brand-logo" style="font-size: 20px;">Agrisense Dashboard</a>
+  <ul class="left teal" style="height:100%;">
+    <li style="height: 5px;"><img src='./images/malf-logo.png' width='60px' width='60px' style="position: relative;top:10px;" /></li>
+    <li style="height: 100%;border-right: 1px dotted rgba(173, 173, 173, 0.35);"><a href="#" class="" style="font-size: 20px;padding-left: 0px;">Agrisense Dashboard </a></li>
+    <li class="s12" style="display: inline-flex;">
+      <span class="s6" style="padding-right: 20px;padding-left:10px;">Select District: </span>
+      <div class="input-field s12" style="padding-left:8px;padding-right:8px;margin-top: 10px;">
+        <select id="districts" style="">
+          <option value="all">All</option>
+        </select>
+      </div>
+    </li>
+    <li class="s12" style="display: inline-flex;">
+      <span class="s6"style="padding-right: 20px;padding-left:10px;">Survey: </span>
+      <div class="input-field" style="width: 200px;padding-left:8px;padding-right:8px;margin-top: 10px;">
+          <select id="formlist">
+            <option value="in">In Season Assessment</option>
+          </select>
+      </div>
+    </li>
+  </ul>
+
+
   <ul class="right hide-on-med-and-down">
     <li><a href="#!">Home</a></li>
     <li><a href="/logout">Logout</a></li>
+    <!-- <li><a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''>Dropdown<i style=" vertical-align: middle;" class="material-icons">arrow_drop_down</i></a></li> -->
   </ul>
   <ul id="slide-out" class="side-nav">
     <li><a href="#!">Home</a></li>
     <li><a href="/logout">Logout</a></li>
+    <!-- <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='<%= user.gravatar %>' width='32px' width='32px' style=' border-radius: 50%;margin: 15px; box-shadow: 0px 0px 1px 1px #efefef;' />Dropdown</a> -->
+    <!-- <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Dropdown<i class="material-icons right">arrow_drop_down</i></a></li> -->
   </ul>
-  <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+  <div>
+  <!-- <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='<%= user.gravatar %>' width='32px' width='32px' style=' border-radius: 50%;margin: 15px; box-shadow: 0px 0px 1px 1px #efefef;' />Dropdown</a> -->
+</div>
+
+
+
+  <!-- <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a> -->
 </nav>
+</div>
 <!-- En of Nav -->
     <div class="row">
       <div class="col s12">
       <div class="row">
         <div class="col s12 m6">
           <div class="card hoverable">
-            <div id='map'></div>
+            <div style="z-index:9;" id='map'></div>
           </div>
           <div class="card hoverable">
             <div id='chart0' style="float:left;width:200px;height:200px;margin-left:50px;"></div>
@@ -67,23 +90,12 @@
           <div class="card hoverable">
             <div id='chart7'></div>
           </div>
+          <div class="card hoverable">
+            <div id='chart9'></div>
+          </div>
         </div>
         <div class="col s12 m6">
-          <div class="card-panel hoverable" >
-            <div class="card-content">
-                <span class="card-title black-text" style="font-weight: bold;">Survey: </span>
-                  <select id="formlist">
-                    <option value="in">In Season Assessment</option>
-                    <!-- <option value="pre">Pre Season Assessment</option>
-                    <option value="end">End of Season Assessment</option> -->
-                  </select>
 
-                  <span class="card-title black-text"style="font-weight: bold;">District: </span>
-                  <select id="districts">
-                    <option value="all">All</option>
-                  </select>
-            </div>
-          </div>
         </div>
 
         <div class="col s12 m6">
@@ -91,14 +103,12 @@
             <div class="card-content">
               <div id='chart1' style="height: 300px;"></div>
             </div>
-            <!-- <div class="card-action">
-              <a href="#">This is a link</a>
-              <a href="#">This is a link</a>
-            </div> -->
           </div>
+
           <div class="card hoverable">
             <div id='chart6' style="height: 300px;"></div>
           </div>
+
         </div>
         <div class="col s12 m6">
           <div class="card-panel hoverable">
@@ -107,52 +117,20 @@
             </div>
           </div>
         </div>
-
-        <!-- <div class="col s12 m6">
-          <div class="card hoverable">
-            <div class="card-content">
-              <span class="card-title black-text">Card Title</span>
-              <p>I am a very simple card. I am good at containing small bits of information.
-              I am convenient because I require little markup to use effectively.</p>
-            </div>
-            <div class="card-action">
-              <a href="#">This is a link</a>
-              <a href="#">This is a link</a>
-            </div>
-          </div>
-        </div> -->
-
-
-        <!-- <div class="col s12 m6">
-          <div class="card hoverable">
-            <div class="card-content">
-              <span class="card-title black-text">Card Title</span>
-              <div id='chart1'></div>
-            </div>
-            <div class="card-action">
-              <a href="#">This is a link</a>
-              <a href="#">This is a link</a>
-            </div>
-          </div>
-        </div> -->
-      </div>
-      <!-- End of row -->
-
-
-
-      <!-- <div class="row">
         <div class="col s12 m6">
-          <div class="card hoverable">
+          <div class="card-panel hoverable">
             <div class="card-content">
-              <div id='chart3'></div>
+               <div id='chart4'></div>
+            </div>
+          </div>
+          <div class="card-panel hoverable">
+            <div class="card-content">
+               <div id='chart8'></div>
             </div>
           </div>
         </div>
-      </div> -->
 
-      <!--End of row  -->
-
-
+      </div>
       </div>
 
 
