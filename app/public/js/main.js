@@ -263,7 +263,7 @@ require([], function() {
 											filterMapByCategory(this.category.replace(" ","_"),"farmer_ass")
 										},
 										mouseOut:function(e){
-											//  resetfilterMapByCategory(this.name,"manageme_1")
+											resetfilterMapByCategory(this.category.replace(" ","_"),"farmer_ass")
 										}
 									}
 								}
