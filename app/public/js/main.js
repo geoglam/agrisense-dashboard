@@ -1,8 +1,18 @@
 require([], function() {
 	var onaClient;
+	var current_district = "*"; // Starts with all districts
+	var current_key;
 	var geojsonMarkerOptions = {
 			radius: 8,
 			fillColor: "#009688",
+			color: "#fff",
+			weight: 1,
+			opacity: 1,
+			fillOpacity: 0.8
+	};
+	var selectedGeojsonMarkerOptions = {
+			radius: 8,
+			fillColor: "#DC9B23",
 			color: "#fff",
 			weight: 1,
 			opacity: 1,
@@ -38,14 +48,29 @@ require([], function() {
 
 			layer.bindPopup(html);
 		}
+
 	});
 	var pre_season_assessment = new L.geoJson();
 	var map;
 	var gData;
 	var layer;
 	var layerLabels;
-	var current_district_data = new L.geoJson(
+	var current_district_data = new L.geoJson(null,{
+			pointToLayer: function (feature, latlng) {
+				return L.circleMarker(latlng, geojsonMarkerOptions);
+			},
+			onEachFeature: function (feature, layer) {
+				var html = ""
+				html += "<b>District:</b> " + feature.properties.District + "<br/>"
+				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
+				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
+				if (feature.properties.crop_con_7 !="n/a"){
+				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_7.split(".")[0]+".jpg' />"  +"<br/>"
+				}
 
+				layer.bindPopup(html);
+			}
+		}
 	);
 	//agrisense
 	//Jambula
@@ -77,8 +102,11 @@ require([], function() {
 				generateFoodPriceRice("*");
 				generateFoodPriceCassava("*");
 				generateFoodPriceBeans("*");
-				in_season_assessment.addTo(map);
-				map.fitBounds(in_season_assessment.getBounds());
+				current_district_data = in_season_assessment;
+				current_district_data.addTo(map);
+				// in_season_assessment.addTo(map);
+				map.fitBounds(current_district_data.getBounds());
+				current_district = "*";
 
 			}else{
 				generateCropTypeChart($(this).val());
@@ -98,6 +126,7 @@ require([], function() {
 	}
 
 	function setMapDataToDistrict(district){
+		current_district = district;
 		current_district_data = L.geoJson(gData, {
 			pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, geojsonMarkerOptions);
@@ -220,13 +249,105 @@ require([], function() {
 						xAxis: {categories: categories,title: {text: null}},
 						yAxis: {min: 0,title: {text: '',align: 'high'},labels: {overflow: 'justify'}},
 						tooltip: {pointFormat: '{point.y:.2f}',valueSuffix: ' percentage'},
-						plotOptions: {bar: {dataLabels: {format:"{y:.2f}",enabled: true}}},
+						plotOptions: {
+							bar: {
+								dataLabels: {
+									format:"{y:.2f}",
+									enabled: true
+								}
+							},
+							series:{
+								point:{
+									events:{
+										mouseOver: function(e) {
+											filterMapByCategory(this.category.replace(" ","_"),"farmer_ass")
+										},
+										mouseOut:function(e){
+											//  resetfilterMapByCategory(this.name,"manageme_1")
+										}
+									}
+								}
+							}
+						},
 						legend: {enabled:false},
 						credits: {enabled: false},
 						series: [{
 								data: chart_data
 						}]
 				});
+	}
+	function resetfilterMapByCategory(category,key){
+		map.removeLayer(current_district_data);
+		current_district_data = L.geoJson(gData, {
+			pointToLayer: function (feature, latlng) {
+
+
+
+        return L.circleMarker(latlng, geojsonMarkerOptions);
+    	},
+			filter: function(feature, layer) {
+					if (current_district =="*"){
+						return true
+					}else{
+						return (feature.properties.District == current_district) ;
+					}
+
+			},
+			onEachFeature: function (feature, layer) {
+				var html = ""
+				html += "<b>District:</b> " + feature.properties.District + "<br/>"
+				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
+				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
+				if (feature.properties.crop_con_7 !="n/a"){
+				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_7.split(".")[0]+".jpg' />"  +"<br/>"
+				}
+
+				layer.bindPopup(html);
+			}
+		});
+		current_key = key;
+
+		// map.removeLayer(current_district_data);
+		current_district_data.addTo(map);
+	}
+	function filterMapByCategory(category,key){
+		map.removeLayer(current_district_data);
+		current_district_data = L.geoJson(gData, {
+			pointToLayer: function (feature, latlng) {
+				var sym;
+					if (feature.properties[key] == category){
+						sym = selectedGeojsonMarkerOptions
+					}else{
+						sym = geojsonMarkerOptions
+					}
+
+
+        return L.circleMarker(latlng, sym);
+    	},
+			filter: function(feature, layer) {
+					if (current_district =="*"){
+						return true
+					}else{
+						return (feature.properties.District == current_district) ;
+					}
+
+			},
+			onEachFeature: function (feature, layer) {
+				var html = ""
+				html += "<b>District:</b> " + feature.properties.District + "<br/>"
+				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
+				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
+				if (feature.properties.crop_con_7 !="n/a"){
+				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_7.split(".")[0]+".jpg' />"  +"<br/>"
+				}
+
+				layer.bindPopup(html);
+			}
+		});
+		current_key = key;
+
+		// map.removeLayer(current_district_data);
+		current_district_data.addTo(map);
 	}
 
 	function generateCropTypeChart(district){
@@ -249,8 +370,41 @@ require([], function() {
 	        chart: {plotBackgroundColor: null,plotBorderWidth: null,plotShadow: false,type: 'pie'},
 	        title: {text: 'Crop Types'},
 	        tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
-	        plotOptions: {pie: {allowPointSelect: true,cursor: 'pointer',dataLabels: {enabled: true,format: '<b>{point.name}</b>: {point.y}',style: {color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'}}}},
+	        plotOptions: {
+						pie: {
+							allowPointSelect: false,
+							cursor: 'pointer',
+							dataLabels: {
+								enabled: true,
+								format: '<b>{point.name}</b>: {point.y}',
+								style: {
+									color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+								}
+							},
+							point:{
+								events:{
+									select: function(e){
+										filterMapByCategory(this.name,"agricultur")
+									},
+									mouseOver: function(e) {
+										 filterMapByCategory(this.name,"agricultur")
+									},
+									unselect:function(e){
+										resetfilterMapByCategory(this.name,"agricultur")
+									}
+									,
+									mouseOut:function(e){
+											console.log(this)
+										 resetfilterMapByCategory(this.name,"agricultur")
+									}
+								}
+							}
+
+						}
+					},
 					credits: {enabled: false},
+
+
 					series: [{
 	            name: 'Crops',
 	            colorByPoint: true,
@@ -563,7 +717,31 @@ require([], function() {
 					chart: {plotBackgroundColor: null,plotBorderWidth: null,plotShadow: false,type: 'pie'},
 					title: {text: 'Crop Irrigated'},
 					tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
-					plotOptions: {pie: {allowPointSelect: true,cursor: 'pointer',dataLabels: {enabled: true,format: '<b>{point.name}</b>: {point.y}',style: {color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'}}}},
+					plotOptions: {
+						pie: {
+							allowPointSelect: false,
+							cursor: 'pointer',
+							dataLabels: {
+								enabled: true,
+								format: '<b>{point.name}</b>: {point.y}',
+								style: {
+									color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+								}
+							},
+							point:{
+								events:{
+									mouseOver: function(e) {
+
+										 filterMapByCategory(this.name,"management")
+									},
+									mouseOut:function(e){
+										 resetfilterMapByCategory(this.name,"management")
+									}
+								}
+							}
+						},
+
+				},
 					credits: {enabled: false},
 					series: [{
 							name: 'Crop Irrigated',
@@ -595,7 +773,30 @@ require([], function() {
 					chart: {plotBackgroundColor: null,plotBorderWidth: null,plotShadow: false,type: 'pie'},
 					title: {text: 'Crop Weeded'},
 					tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
-					plotOptions: {pie: {allowPointSelect: true,cursor: 'pointer',dataLabels: {enabled: true,format: '<b>{point.name}</b>: {point.y}',style: {color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'}}}},
+					plotOptions: {
+						pie: {
+							allowPointSelect: false,
+							cursor: 'pointer',
+							dataLabels: {
+								enabled: true,
+								format: '<b>{point.name}</b>: {point.y}',
+								style: {
+									color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+								}
+							},
+							point:{
+								events:{
+									mouseOver: function(e) {
+
+										 filterMapByCategory(this.name,"manageme_1")
+									},
+									mouseOut:function(e){
+										 resetfilterMapByCategory(this.name,"manageme_1")
+									}
+								}
+							}
+						}
+					},
 					credits: {enabled: false},
 					series: [{
 							name: 'Crop Weeded',
@@ -664,8 +865,9 @@ function changeBasemap(basemap){
 		// end_of_season_assessment.addTo(map);
 		// addGeoJSON("data/disctrict_join_end_of_season_assessment.geojson",end_of_season_assessment);
 
-		in_season_assessment.addTo(map);
+		// in_season_assessment.addTo(map);
 		addGeoJSON("data/disctrict_join_in_season_assessment.geojson",in_season_assessment);
+		addGeoJSON("data/disctrict_join_in_season_assessment.geojson",current_district_data);
 		map.fitBounds(in_season_assessment.getBounds());
 
 		// current_district_data.addTo(map);
