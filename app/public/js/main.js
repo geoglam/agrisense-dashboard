@@ -1,7 +1,15 @@
 require([], function() {
+	//http://52.23.108.108
+	//agrisense
+	//Jambula
 	var onaClient;
 	var current_district = "*"; // Starts with all districts
+	var current_month = 4
 	var current_key;
+	var map;
+	var gData;
+	var layer;
+	var layerLabels;
 	var geojsonMarkerOptions = {
 			radius: 8,
 			fillColor: "#009688",
@@ -32,29 +40,9 @@ require([], function() {
 			layer.bindPopup(html);
 		}
 	});
-	var end_of_season_assessment = new L.geoJson();
-	var in_season_assessment = new L.geoJson(null,{
-		pointToLayer: function (feature, latlng) {
-			return L.circleMarker(latlng, geojsonMarkerOptions);
-		},
-		onEachFeature: function (feature, layer) {
-			var html = ""
-			html += "<b>District:</b> " + feature.properties.District + "<br/>"
-			html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
-			html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
-			if (feature.properties.crop_con_7 !="n/a"){
-			html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_7.split(".")[0]+".jpg' />"  +"<br/>"
-			}
 
-			layer.bindPopup(html);
-		}
+	var in_season_assessment = new L.geoJson();
 
-	});
-	var pre_season_assessment = new L.geoJson();
-	var map;
-	var gData;
-	var layer;
-	var layerLabels;
 	var current_district_data = new L.geoJson(null,{
 			pointToLayer: function (feature, latlng) {
 				return L.circleMarker(latlng, geojsonMarkerOptions);
@@ -64,16 +52,14 @@ require([], function() {
 				html += "<b>District:</b> " + feature.properties.District + "<br/>"
 				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
 				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
-				if (feature.properties.crop_con_7 !="n/a"){
-				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_7.split(".")[0]+".jpg' />"  +"<br/>"
+				if (feature.properties.crop_con_8 !=null){
+				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
 				}
-
 				layer.bindPopup(html);
 			}
 		}
 	);
-	//agrisense
-	//Jambula
+
 	function getAllForms(){
 		onaClient.getForms(function(data){
 			var html = '';
@@ -87,68 +73,101 @@ require([], function() {
 
 	function resetMasterialSelect(){
 		$('select').material_select();
-
 		$('#districts').change(function(){
-			map.removeLayer(in_season_assessment);
-			map.removeLayer(current_district_data);
-			if ($(this).val() == "all") {
-				generateCropTypeChart("*");
-				generateMaizeDevelopmentStage("*");
-				generateMaizeHeightChart("*");
-				generateIrrigated("*");
-				generateWeeded("*");
-				farmerAssessmentCondition("*");
-				generateMaizeFoodPriceChart("*");
-				generateFoodPriceRice("*");
-				generateFoodPriceCassava("*");
-				generateFoodPriceBeans("*");
-				current_district_data = in_season_assessment;
-				current_district_data.addTo(map);
-				// in_season_assessment.addTo(map);
-				map.fitBounds(current_district_data.getBounds());
-				current_district = "*";
+			districtStateChange($(this).val());
 
-			}else{
-				generateCropTypeChart($(this).val());
-				generateMaizeDevelopmentStage($(this).val());
-				generateMaizeHeightChart($(this).val());
-				generateIrrigated($(this).val());
-				generateWeeded($(this).val());
-				farmerAssessmentCondition($(this).val());
-				generateMaizeFoodPriceChart($(this).val());
-				generateFoodPriceRice($(this).val());
-				generateFoodPriceCassava($(this).val());
-				generateFoodPriceBeans($(this).val());
-				setMapDataToDistrict($(this).val());
-			}
+		});
 
-		})
+		$('#month').change(function(){
+			current_month = this.value;
+			current_district = $("#districts").val();
+			monthStateChange(current_month);
+
+		});
+	}
+	function districtStateChange(value){
+		map.removeLayer(current_district_data);
+		if (value == "all") {
+			current_district = "*";
+			loadCharts("*");
+			showAllMapData();
+		}else{
+			current_district = value;
+			loadCharts(value);
+			setMapDataToDistrict(value);
+		}
 	}
 
-	function setMapDataToDistrict(district){
-		current_district = district;
+	function monthStateChange(month){
+		map.removeLayer(current_district_data);
+		district = $('#districts').val();
+		if (district == "all") {
+			current_district = "*";
+			loadCharts("*");
+			showAllMapData();
+		}else{
+			current_district = district;
+			loadCharts(district);
+			setMapDataToDistrict(district);
+		}
+	}
+
+	function showAllMapData(){
 		current_district_data = L.geoJson(gData, {
 			pointToLayer: function (feature, latlng) {
-        return L.circleMarker(latlng, geojsonMarkerOptions);
-    	},
+				return L.circleMarker(latlng, geojsonMarkerOptions);
+			},
 			filter: function(feature, layer) {
-					return feature.properties.District == district;
+					return (feature.properties.month == current_month)
 			},
 			onEachFeature: function (feature, layer) {
 				var html = ""
 				html += "<b>District:</b> " + feature.properties.District + "<br/>"
 				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
 				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
-				if (feature.properties.crop_con_7 !="n/a"){
-				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_7.split(".")[0]+".jpg' />"  +"<br/>"
+				html += "<b>Month:</b>" + feature.properties.month + "<br/>"
+				if (feature.properties.crop_con_8 !=null){
+					html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
 				}
 
 				layer.bindPopup(html);
 			}
 		});
 		map.fitBounds(current_district_data.getBounds());
-		//map.addLayer(current_district_data);
 		current_district_data.addTo(map);
+
+	}
+	function setMapDataToDistrict(district){
+		current_district_data = L.geoJson(gData, {
+			pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, geojsonMarkerOptions);
+    	},
+			filter: function(feature, layer) {
+					return ((feature.properties.District == district) && ( feature.properties.month == current_month))
+			},
+			onEachFeature: function (feature, layer) {
+				var html = ""
+				html += "<b>District:</b> " + feature.properties.District + "<br/>"
+				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
+				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
+				html += "<b>Month:</b>" + feature.properties.month + "<br/>"
+				if (feature.properties.crop_con_8 !=null){
+					html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
+				}
+
+				layer.bindPopup(html);
+			}
+		});
+		if (_.isEmpty(current_district_data._layers)){
+
+		}else{
+			console.log(current_district_data._layers);
+			map.fitBounds(current_district_data.getBounds());
+			current_district_data.addTo(map);			
+		}
+		// console.log(current_district_data._layers);
+		// map.fitBounds(current_district_data.getBounds());
+		// current_district_data.addTo(map);
 	}
 	function stopSplashScreen(){
 		$( "#loading" ).animate({
@@ -176,10 +195,13 @@ require([], function() {
 	function setDistrictsItems(){
 		var form = $('#formlist').val();
 		if (form == 'in'){
-			var districts = _.uniq(in_season_assessment.getLayers().map(function(row){
-				row.feature.properties
-				return row.feature.properties.District ? row.feature.properties.District : 'other';
+
+			var districts = _.uniq(in_season_assessment.getLayers().filter(function(row){
+				return row.feature.properties.District != null;
+			}).map(function(row){
+				return row.feature.properties.District;
 			}));
+
 			var html = "<option value='all'>All</option>";
 			districts.sort();
 			$(districts).each(function(key,data){
@@ -193,10 +215,18 @@ require([], function() {
 	function getData(district,field){
 		var data = []
 		if (district == "*"){
-			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties[field]})
+			data = in_season_assessment.getLayers().filter(function(row){
+				return row.feature.properties.month == current_month;
+			}).map(function(row){
+				return row.feature.properties[field]
+			});
+
 		}else{
-			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
-			data = data.map(function(row){return row.feature.properties[field]})
+			data = in_season_assessment.getLayers().filter(function(row){
+		    return ((row.feature.properties.District == district) && (row.feature.properties.month == current_month))
+		  }).map(function(row){
+		    return row.feature.properties[field]
+		  });
 		}
 		return data
 	}
@@ -204,12 +234,12 @@ require([], function() {
 	function generateMaizeDevelopmentStage(district){
 		var data = getData(district,"select_med");
 		data = data.filter(function(row){
-			return row != "n/a"
+			return row != null
 		});
 		var total = data.length;
 		var uniq = _.uniq(data);
 		var categories = uniq.map(function(row){
-			return row.replace("_"," ")
+			return row //row.replace("_"," ")
 		})
 		var chart_data = uniq.map(function(row){
 			return ((_.countBy(data)[row])/total) *100
@@ -232,7 +262,7 @@ require([], function() {
 	function farmerAssessmentCondition(district){
 		var data = getData(district,"farmer_ass");
 		data = data.filter(function(row){
-			return row != "n/a"
+			return row != null
 		});
 		var total = data.length;
 		var uniq = _.uniq(data);
@@ -280,9 +310,6 @@ require([], function() {
 		map.removeLayer(current_district_data);
 		current_district_data = L.geoJson(gData, {
 			pointToLayer: function (feature, latlng) {
-
-
-
         return L.circleMarker(latlng, geojsonMarkerOptions);
     	},
 			filter: function(feature, layer) {
@@ -298,16 +325,14 @@ require([], function() {
 				html += "<b>District:</b> " + feature.properties.District + "<br/>"
 				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
 				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
-				if (feature.properties.crop_con_7 !="n/a"){
-				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_7.split(".")[0]+".jpg' />"  +"<br/>"
+				if (feature.properties.crop_con_8 !=null){
+				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
 				}
 
 				layer.bindPopup(html);
 			}
 		});
 		current_key = key;
-
-		// map.removeLayer(current_district_data);
 		current_district_data.addTo(map);
 	}
 	function filterMapByCategory(category,key){
@@ -320,8 +345,6 @@ require([], function() {
 					}else{
 						sym = geojsonMarkerOptions
 					}
-
-
         return L.circleMarker(latlng, sym);
     	},
 			filter: function(feature, layer) {
@@ -337,8 +360,8 @@ require([], function() {
 				html += "<b>District:</b> " + feature.properties.District + "<br/>"
 				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
 				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
-				if (feature.properties.crop_con_7 !="n/a"){
-				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_7.split(".")[0]+".jpg' />"  +"<br/>"
+				if (feature.properties.crop_con_8 !=null){
+					html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
 				}
 
 				layer.bindPopup(html);
@@ -353,10 +376,18 @@ require([], function() {
 	function generateCropTypeChart(district){
 		var data;
 		if (district == "*"){
-			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.agricultur})
+			data = in_season_assessment.getLayers().filter(function(row){
+				return row.feature.properties.month == current_month;
+			}).map(function(row){
+				return row.feature.properties.agricultur
+			});
 		}else{
-			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
-			data = data.map(function(row){return row.feature.properties.agricultur})
+			data = in_season_assessment.getLayers().filter(function(row){
+				return ((row.feature.properties.District == district) && (row.feature.properties.month == current_month))
+			}).map(function(row){
+				return row.feature.properties.agricultur
+			});
+
 		}
 		var unique_crops = _.uniq(data);
 		var chartData = unique_crops.map(function(row){
@@ -433,19 +464,10 @@ require([], function() {
 		var bins = [800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800]
 		var step = 200
 
-		if (district == "*"){
-			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.food_pri_3})
-		}else{
-			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
-			data = data.map(function(row){return row.feature.properties.food_pri_3})
-		}
-
-
+		data = getData(district,"food_pri_3")
 		data = data.filter(function(row){
-			return row !="n/a"
+			return row !=null
 		});
-
-
 
 		var total = data.length -1;
 		var binStep = 0;
@@ -487,16 +509,9 @@ require([], function() {
 	function generateFoodPriceCassava(district){
 		var bins = [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700]
 		var step = 100
-
-		if (district == "*"){
-			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.food_pri_2})
-		}else{
-			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
-			data = data.map(function(row){return row.feature.properties.food_pri_2})
-		}
-
+		data = getData(district,"food_pri_2")
 		data = data.filter(function(row){
-			return row !="n/a"
+			return row !=null
 		});
 
 		var total = data.length -1;
@@ -539,16 +554,10 @@ require([], function() {
 	function generateFoodPriceRice(district){
 		var bins = [200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000]
 		var step = 200
-
-		if (district == "*"){
-			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.food_pri_1})
-		}else{
-			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
-			data = data.map(function(row){return row.feature.properties.food_pri_1})
-		}
+		data = getData(district,"food_pri_1")
 
 		data = data.filter(function(row){
-			return row !="n/a"
+			return row !=null
 		});
 
 		var total = data.length -1;
@@ -591,14 +600,10 @@ require([], function() {
 	function generateMaizeHeightChart(district){
 		var bins = [0.5,1.0,1.5,2.0,2.5,3.0,4.0,5.0,6.0]
 		var step = 0.5
-		if (district == "*"){
-			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.crop_condi})
-		}else{
-			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
-			data = data.map(function(row){return row.feature.properties.crop_condi})
-		}
+		data = getData(district,"crop_condi")
 		data = data.filter(function(row){
-			return row !="n/a"
+			return row !=null
+
 		});
 		data = data.sort()
 		var total = data.length -1;
@@ -640,14 +645,9 @@ require([], function() {
 	function generateMaizeFoodPriceChart(district){
 		var bins = [300,400,500,600,700,800,900,1000,1500,2000]
 		var step = 100
-		if (district == "*"){
-			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.food_price})
-		}else{
-			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
-			data = data.map(function(row){return row.feature.properties.food_price})
-		}
+		data = getData(district,"food_price")
 		data = data.filter(function(row){
-			return row !="n/a"
+			return row !=null
 		});
 
 		data = data.sort();
@@ -696,14 +696,10 @@ require([], function() {
 	}
 
 	function generateIrrigated(district){
-		if (district == "*"){
-			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.management})
-		}else{
-			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
-			data = data.map(function(row){return row.feature.properties.management})
-		}
+
+		data = getData(district,'management')
 		data = data.filter(function(row){
-			return row !="n/a"
+			return row !=null
 		})
 		var categories = _.uniq(data);
 
@@ -731,7 +727,6 @@ require([], function() {
 							point:{
 								events:{
 									mouseOver: function(e) {
-
 										 filterMapByCategory(this.name,"management")
 									},
 									mouseOut:function(e){
@@ -752,14 +747,9 @@ require([], function() {
 	}
 
 	function generateWeeded(district){
-		if (district == "*"){
-			data = in_season_assessment.getLayers().map(function(row){return row.feature.properties.manageme_1})
-		}else{
-			data = in_season_assessment.getLayers().filter(function(row){return row.feature.properties.District == district});
-			data = data.map(function(row){return row.feature.properties.manageme_1})
-		}
+		data = getData(district,"manageme_1")
 		data = data.filter(function(row){
-			return row !="n/a"
+			return row !=null
 		})
 		var categories = _.uniq(data);
 
@@ -806,36 +796,50 @@ require([], function() {
 			});
 	}
 
-	function loadCharts(){
-		debugger
+	function loadCharts(district){
+
+		generateCropTypeChart(district);
+		generateMaizeDevelopmentStage(district);
+		generateMaizeHeightChart(district);
+		generateIrrigated(district)
+		generateWeeded(district);
+		farmerAssessmentCondition(district);
+		generateMaizeFoodPriceChart(district);
+		generateFoodPriceRice(district);
+		generateFoodPriceCassava(district);
+		generateFoodPriceBeans(district);
+
 	}
+
 	function setBasemap(basemap) {
-	if (layer) {
-		map.removeLayer(layer);
+		if (layer) {
+			map.removeLayer(layer);
+		}
+
+		layer = L.esri.basemapLayer(basemap);
+
+		map.addLayer(layer);
+
+		if (layerLabels) {
+			map.removeLayer(layerLabels);
+		}
+
+		if (basemap === 'ShadedRelief'
+		 || basemap === 'Oceans'
+		 || basemap === 'Gray'
+		 || basemap === 'DarkGray'
+		 || basemap === 'Imagery'
+		 || basemap === 'Terrain'
+	 ) {
+			layerLabels = L.esri.basemapLayer(basemap + 'Labels');
+			map.addLayer(layerLabels);
+		}
 	}
 
-	layer = L.esri.basemapLayer(basemap);
-
-	map.addLayer(layer);
-
-	if (layerLabels) {
-		map.removeLayer(layerLabels);
+	function changeBasemap(basemap){
+		setBasemap(basemap);
 	}
 
-	if (basemap === 'ShadedRelief'
-	 || basemap === 'Oceans'
-	 || basemap === 'Gray'
-	 || basemap === 'DarkGray'
-	 || basemap === 'Imagery'
-	 || basemap === 'Terrain'
- ) {
-		layerLabels = L.esri.basemapLayer(basemap + 'Labels');
-		map.addLayer(layerLabels);
-	}
-}
-function changeBasemap(basemap){
-	setBasemap(basemap);
-}
 	function initMap(){
 		map = L.map('map',{
 			fullscreenControl: true,
@@ -868,7 +872,7 @@ function changeBasemap(basemap){
 		// in_season_assessment.addTo(map);
 		addGeoJSON("data/disctrict_join_in_season_assessment.geojson",in_season_assessment);
 		addGeoJSON("data/disctrict_join_in_season_assessment.geojson",current_district_data);
-		map.fitBounds(in_season_assessment.getBounds());
+		map.fitBounds(current_district_data.getBounds());
 
 		// current_district_data.addTo(map);
 		// pre_season_assessment.addTo(map);
@@ -896,24 +900,13 @@ function changeBasemap(basemap){
 
 		$("#basemaps").change(function(){
 			changeBasemap(this.value);
-		})
+		});
 
 
 		stopSplashScreen();
 		initMap();
 		setDistrictsItems();
-		generateCropTypeChart("*");
-		generateMaizeDevelopmentStage("*");
-		generateMaizeHeightChart("*");
-		generateIrrigated("*")
-		generateWeeded("*");
-		farmerAssessmentCondition("*");
-		generateMaizeFoodPriceChart("*");
-		generateFoodPriceRice("*");
-		generateFoodPriceCassava("*");
-		generateFoodPriceBeans("*")
-		// getAllForms();
-
+		loadCharts("*");
 	}
 
 	$(document).ready(function() {
