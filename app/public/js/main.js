@@ -163,7 +163,7 @@ require([], function() {
 		}else{
 			console.log(current_district_data._layers);
 			map.fitBounds(current_district_data.getBounds());
-			current_district_data.addTo(map);			
+			current_district_data.addTo(map);
 		}
 		// console.log(current_district_data._layers);
 		// map.fitBounds(current_district_data.getBounds());
