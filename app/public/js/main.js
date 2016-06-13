@@ -2,9 +2,24 @@ require([], function() {
 	//http://52.23.108.108
 	//agrisense
 	//Jambula
+	var d = new Date();
+	var month_key = new Array();
+	month_key[1] = "January";
+	month_key[2] = "February";
+	month_key[3] = "March";
+	month_key[4] = "April";
+	month_key[5] = "May";
+	month_key[6] = "June";
+	month_key[7] = "July";
+	month_key[8] = "August";
+	month_key[9] = "September";
+	month_key[10] = "October";
+	month_key[11] = "November";
+	month_key[12] = "December";
 	var onaClient;
 	var current_district = "*"; // Starts with all districts
-	var current_month = 4
+	var current_month = 6
+	var today_month = d.getMonth()+1;
 	var current_key;
 	var map;
 	var gData;
@@ -82,6 +97,9 @@ require([], function() {
 			current_month = this.value;
 			current_district = $("#districts").val();
 			monthStateChange(current_month);
+			setDistrictsItems();
+			loadCharts("*");
+
 
 		});
 	}
@@ -186,6 +204,7 @@ require([], function() {
 			success: function(data) {
 				gData = data;
 		  	$(data.features).each(function(key, data) {
+
 		        geojson.addData(data);
 		    });
 			}
@@ -195,9 +214,8 @@ require([], function() {
 	function setDistrictsItems(){
 		var form = $('#formlist').val();
 		if (form == 'in'){
-
 			var districts = _.uniq(in_season_assessment.getLayers().filter(function(row){
-				return row.feature.properties.District != null;
+				return (row.feature.properties.District != null && row.feature.properties.month == current_month);
 			}).map(function(row){
 				return row.feature.properties.District;
 			}));
@@ -206,9 +224,33 @@ require([], function() {
 			districts.sort();
 			$(districts).each(function(key,data){
 				html += "<option value='"+data+"'>"+data+"</option>";
-			})
+			});
 			$("#districts").html(html);
 			$("#districts").material_select();
+		}
+	}
+
+	function setMonths(){
+		var form = $('#formlist').val();
+		if (form == 'in'){
+
+			var months = _.uniq(in_season_assessment.getLayers().filter(function(row){
+				return row.feature.properties.month != null;
+			}).map(function(row){
+				return row.feature.properties.month;
+			}));
+
+			var html;
+			months.sort();
+			$(months).each(function(key,data){
+				if (data == today_month){
+					html += "<option selected value='"+data+"'>"+month_key[data]+"</option>";
+				}else{
+					html += "<option value='"+data+"'>"+month_key[data]+"</option>";
+				}
+			});
+			$("#month").html(html);
+			$("#month").material_select();
 		}
 	}
 
@@ -267,7 +309,7 @@ require([], function() {
 		var total = data.length;
 		var uniq = _.uniq(data);
 		var categories = uniq.map(function(row){
-			return row.replace("_"," ")
+			return row
 		})
 		var chart_data = uniq.map(function(row){
 			return ((_.countBy(data)[row])/total) *100
@@ -290,10 +332,10 @@ require([], function() {
 								point:{
 									events:{
 										mouseOver: function(e) {
-											filterMapByCategory(this.category.replace(" ","_"),"farmer_ass")
+											filterMapByCategory(this.category,"farmer_ass")
 										},
 										mouseOut:function(e){
-											resetfilterMapByCategory(this.category.replace(" ","_"),"farmer_ass")
+											resetfilterMapByCategory(this.category,"farmer_ass")
 										}
 									}
 								}
@@ -314,9 +356,9 @@ require([], function() {
     	},
 			filter: function(feature, layer) {
 					if (current_district =="*"){
-						return true
+						return (feature.properties.month == current_month)
 					}else{
-						return (feature.properties.District == current_district) ;
+						return (feature.properties.District == current_district && feature.properties.month == current_month) ;
 					}
 
 			},
@@ -349,9 +391,10 @@ require([], function() {
     	},
 			filter: function(feature, layer) {
 					if (current_district =="*"){
-						return true
+						return (feature.properties.month == current_month)
 					}else{
-						return (feature.properties.District == current_district) ;
+						// console.log(current_month);
+						return (feature.properties.District == current_district && feature.properties.month == current_month) ;
 					}
 
 			},
@@ -375,6 +418,7 @@ require([], function() {
 
 	function generateCropTypeChart(district){
 		var data;
+
 		if (district == "*"){
 			data = in_season_assessment.getLayers().filter(function(row){
 				return row.feature.properties.month == current_month;
@@ -425,7 +469,6 @@ require([], function() {
 									}
 									,
 									mouseOut:function(e){
-											console.log(this)
 										 resetfilterMapByCategory(this.name,"agricultur")
 									}
 								}
@@ -861,23 +904,12 @@ require([], function() {
 		});
 
 
-		current_district_data.addTo(map);
+		// current_district_data.addTo(map);
 
 		district_boundary.addTo(map);
 		addGeoJSON("data/TZdistricts_2012.geojson",district_boundary);
-
-		// end_of_season_assessment.addTo(map);
-		// addGeoJSON("data/disctrict_join_end_of_season_assessment.geojson",end_of_season_assessment);
-
-		// in_season_assessment.addTo(map);
 		addGeoJSON("data/disctrict_join_in_season_assessment.geojson",in_season_assessment);
 		addGeoJSON("data/disctrict_join_in_season_assessment.geojson",current_district_data);
-		map.fitBounds(current_district_data.getBounds());
-
-		// current_district_data.addTo(map);
-		// pre_season_assessment.addTo(map);
-		// addGeoJSON("data/disctrict_join_in_season_assessment.geojson",current_district_data);
-
 	}
 
 	function init(){
@@ -905,8 +937,13 @@ require([], function() {
 
 		stopSplashScreen();
 		initMap();
+		setMonths();
 		setDistrictsItems();
 		loadCharts("*");
+		$('#month').change();
+		// current_district_data.addTo(map);
+
+
 	}
 
 	$(document).ready(function() {
