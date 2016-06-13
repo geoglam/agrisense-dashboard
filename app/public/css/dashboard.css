@@ -10,6 +10,11 @@
      opacity: 1;
 
 }
+.download-icon{
+  float: left !important;
+/* margin-right: 15px; */
+  margin-top: 23px !important;
+}
 #basemaps-wrapper {
 	position: absolute;
 	top: 10px;

@@ -28,7 +28,14 @@
   </div>
   <!-- End Loading Splash -->
 <div class="teal navbar-fixed nav-wrapper">
-
+  <!-- Dropdown Structure -->
+<ul id="dropdown1" class="dropdown-content">
+  <li><a href="#!">ShapeFile</a></li>
+  <li><a href="#!">GeoJSON</a></li>
+  <li class="divider"></li>
+  <li><a href="#!">CSV</a></li>
+  <li><a href="#!">XLS</a></li>
+</ul>
   <nav class="teal">
   <ul class="left teal" style="height:100%;">
     <li style="height: 5px;"><img src='./images/malf-logo.png' width='60px' width='60px' style="position: relative;top:10px;" /></li>
@@ -63,12 +70,12 @@
 
 
   <ul class="right hide-on-med-and-down">
-    <li><a href="#!">Home</a></li>
+    <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Download<i class="material-icons left download-icon">ic_file_download</i></a></li>
     <li><a href="/logout">Logout</a></li>
     <!-- <li><a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''>Dropdown<i style=" vertical-align: middle;" class="material-icons">arrow_drop_down</i></a></li> -->
   </ul>
   <ul id="slide-out" class="side-nav">
-    <li><a href="#!">Home</a></li>
+    <!-- <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Dropdown<i class="material-icons right">arrow_drop_down</i></a></li> -->
     <li><a href="/logout">Logout</a></li>
     <!-- <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='<%= user.gravatar %>' width='32px' width='32px' style=' border-radius: 50%;margin: 15px; box-shadow: 0px 0px 1px 1px #efefef;' />Dropdown</a> -->
     <!-- <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Dropdown<i class="material-icons right">arrow_drop_down</i></a></li> -->

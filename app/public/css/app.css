@@ -10,7 +10,11 @@ body {
     display: table-cell;
     vertical-align: middle;
 }
-
+.download-icon{
+  float: left !important;
+/* margin-right: 15px; */
+  margin-top: 23px !important;
+}
 .backgroundColor{
   background-color: #4B827D !important
 }

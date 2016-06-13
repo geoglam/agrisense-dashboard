@@ -913,6 +913,7 @@ require([], function() {
 	}
 
 	function init(){
+		$(".dropdown-button").dropdown();
 		resetMasterialSelect();
 		var siteObject = {
 			url:'http://52.23.108.108/api/v1/',
