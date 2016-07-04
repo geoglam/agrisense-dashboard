@@ -1,7 +1,5 @@
 require([], function() {
-	//http://52.23.108.108
-	//agrisense
-	//Jambula
+
 	var d = new Date();
 	var month_key = new Array();
 	month_key[1] = "January";
@@ -25,6 +23,8 @@ require([], function() {
 	var gData;
 	var layer;
 	var layerLabels;
+
+
 	var geojsonMarkerOptions = {
 			radius: 8,
 			fillColor: "#009688",
@@ -33,6 +33,7 @@ require([], function() {
 			opacity: 1,
 			fillOpacity: 0.8
 	};
+
 	var selectedGeojsonMarkerOptions = {
 			radius: 8,
 			fillColor: "#DC9B23",
@@ -41,12 +42,14 @@ require([], function() {
 			opacity: 1,
 			fillOpacity: 0.8
 	};
+
 	var myStyle = {
     "color": "#635B5B",
     "weight": 2,
     "opacity": 9,
 		"fillOpacity": 0,
 };
+
 	var district_boundary = new L.geoJson(null,{
 		style: myStyle,
 		onEachFeature: function (feature, layer) {
@@ -68,7 +71,7 @@ require([], function() {
 				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
 				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
 				if (feature.properties.crop_con_8 !=null){
-				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
+				html += "<img width='150px' src='"+appConfig.mediaURL+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
 				}
 				layer.bindPopup(html);
 			}
@@ -145,7 +148,7 @@ require([], function() {
 				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
 				html += "<b>Month:</b>" + feature.properties.month + "<br/>"
 				if (feature.properties.crop_con_8 !=null){
-					html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
+					html += "<img width='150px' src='"+appConfig.mediaURL+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
 				}
 
 				layer.bindPopup(html);
@@ -170,7 +173,7 @@ require([], function() {
 				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
 				html += "<b>Month:</b>" + feature.properties.month + "<br/>"
 				if (feature.properties.crop_con_8 !=null){
-					html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
+					html += "<img width='150px' src='"+appConfig.mediaURL+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
 				}
 
 				layer.bindPopup(html);
@@ -383,7 +386,7 @@ require([], function() {
 				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
 				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
 				if (feature.properties.crop_con_8 !=null){
-				html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
+				html += "<img width='150px' src='"+appConfig.mediaURL+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
 				}
 
 				layer.bindPopup(html);
@@ -419,7 +422,7 @@ require([], function() {
 				html += "<b>Crop:</b> "+feature.properties.agricultur + "<br/>"
 				html += "<b>Comments:</b> "+feature.properties.comments + "<br/>"
 				if (feature.properties.crop_con_8 !=null){
-					html += "<img width='150px' src='http://52.23.108.108/media/agrisense/attachments/"+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
+					html += "<img width='150px' src='"+appConfig.mediaURL+feature.properties.crop_con_8.split(".")[0]+".jpg' />"  +"<br/>"
 				}
 
 				layer.bindPopup(html);
@@ -1033,8 +1036,8 @@ require([], function() {
 		$(".dropdown-button").dropdown();
 		resetMasterialSelect();
 		var siteObject = {
-			url:'http://52.23.108.108/api/v1/',
-			token:'ssfdk343434'
+			url:appConfig.baseURL,
+			token:appConfig.token
 		}
 		onaClient = new OnaClient(siteObject);
 
@@ -1060,7 +1063,6 @@ require([], function() {
 		loadCharts("*");
 		$('#month').change();
 		// current_district_data.addTo(map);
-
 
 	}
 

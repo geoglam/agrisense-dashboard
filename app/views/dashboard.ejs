@@ -11,7 +11,6 @@
   <script src="https://code.highcharts.com/modules/exporting.js"></script>
   <script src="js/Client.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/leaflet/1.0.0-beta.2/leaflet.css" />
-
   <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
   <script src="/vendor/lodash/dist/lodash.js"></script>
   <link rel="stylesheet" href="/css/dashboard.css">
@@ -72,21 +71,13 @@
   <ul class="right hide-on-med-and-down">
     <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Download<i class="material-icons left download-icon">ic_file_download</i></a></li>
     <li><a href="/logout">Logout</a></li>
-    <!-- <li><a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''>Dropdown<i style=" vertical-align: middle;" class="material-icons">arrow_drop_down</i></a></li> -->
   </ul>
   <ul id="slide-out" class="side-nav">
-    <!-- <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Dropdown<i class="material-icons right">arrow_drop_down</i></a></li> -->
     <li><a href="/logout">Logout</a></li>
-    <!-- <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='<%= user.gravatar %>' width='32px' width='32px' style=' border-radius: 50%;margin: 15px; box-shadow: 0px 0px 1px 1px #efefef;' />Dropdown</a> -->
-    <!-- <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Dropdown<i class="material-icons right">arrow_drop_down</i></a></li> -->
   </ul>
   <div>
-  <!-- <a data-activates='dropdown1' data-beloworigin="true" class='dropdown-button' href=''><img src='<%= user.gravatar %>' width='32px' width='32px' style=' border-radius: 50%;margin: 15px; box-shadow: 0px 0px 1px 1px #efefef;' />Dropdown</a> -->
 </div>
 
-
-
-  <!-- <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a> -->
 </nav>
 </div>
 <!-- En of Nav -->
@@ -179,11 +170,9 @@
                 <div class="col s3 m3 l4">
                   <img width="80px" src="./images/STARS_LOGO_L_cr.jpg" />
                 </div>
-                <!-- <h5 class="white-text">Footer Content</h5> -->
                 <p class="grey-text text-lighten-4"></p>
               </div>
               <div class="col l4 offset-l2 s12">
-                <!-- <h5 class="white-text">Links</h5> -->
                 <ul>
                   <li><a class="grey-text text-lighten-3" href="www.agrisense.org ">Agrisense</a></li>
                   <li><a class="grey-text text-lighten-3" href="www.stars-project.org">STARS Project</a></li>
@@ -195,7 +184,7 @@
           </div>
           <div class="footer-copyright">
             <div class="container">
-            © 2015 Copyright GeoMarvel, LLC
+            © 2016 Copyright GeoMarvel, LLC
             <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
             </div>
           </div>
@@ -222,7 +211,7 @@
     deps: [
       'dojo/domReady!'
     ],
-    callback: function() { require(['js/main']);
+    callback: function() { require(['js/config','js/main']);
     }
   };
 </script>
@@ -231,6 +220,5 @@
 <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js' async></script>
 <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
 <script src="https://js.arcgis.com/3.16/" async></script>
-  <!-- <script src="/bootloader.js"></script> -->
 </body>
 </html>

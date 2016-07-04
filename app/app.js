@@ -6,9 +6,10 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var fetch = require('node-fetch');
 var expressSession = require('express-session');
-
 var passport = require('passport');
 var passportLocal = require('passport-local');
+var config = require('./public/js/config');
+
 
 // Set Views
 app.set('view engine', 'ejs');
@@ -32,7 +33,8 @@ passport.use(new passportLocal.Strategy(verifyCredentials));
 
 function makeBasicAuthRequest(username,password,done){
   var options = {
-  url: 'http://52.23.108.108/api/v1/user',
+
+  url: config.authenticateURL,
   auth: {
     user: username,
     password: password,
