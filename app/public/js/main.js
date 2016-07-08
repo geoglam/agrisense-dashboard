@@ -246,6 +246,12 @@ require(["js/charts"], function(charts) {
 
 			var html;
 			months.sort();
+			var selected_month;
+			// $(months).each(function(key,data){
+			// 	if (data == today_month){
+			// 		selected_month = today_month;
+			// 	}
+			// });
 			$(months).each(function(key,data){
 				if (data == today_month){
 					html += "<option selected value='"+data+"'>"+month_key[data]+"</option>";
@@ -253,7 +259,9 @@ require(["js/charts"], function(charts) {
 					html += "<option value='"+data+"'>"+month_key[data]+"</option>";
 				}
 			});
+
 			$("#month").html(html);
+			$('#month').children().last();
 			$("#month").material_select();
 		}
 	}
@@ -550,7 +558,7 @@ require(["js/charts"], function(charts) {
 				legend: {enabled: false},
 				credits: {enabled: false},
 				tooltip: {enabled:false,pointFormat: '{point.y}'},
-				plotOptions: {bar: {dataLabels: {format:"{y:.0f} £",enabled: true}}},
+				plotOptions: {bar: {dataLabels: {format:"{y:.0f} TSh",enabled: true}}},
 				series: [{
 						data: s
 				}]
@@ -584,7 +592,7 @@ require(["js/charts"], function(charts) {
 				legend: {enabled: false},
 				credits: {enabled: false},
 				tooltip: {enabled:false,pointFormat: '{point.y}'},
-				plotOptions: {bar: {dataLabels: {format:"{y:.0f} £",enabled: true}}},
+				plotOptions: {bar: {dataLabels: {format:"{y:.0f} TSh",enabled: true}}},
 				series: [{
 						data: s
 				}]
@@ -619,7 +627,7 @@ require(["js/charts"], function(charts) {
 				legend: {enabled: false},
 				credits: {enabled: false},
 				tooltip: {enabled:false,pointFormat: '{point.y}'},
-				plotOptions: {bar: {dataLabels: {format:"{y:.0f} £",enabled: true}}},
+				plotOptions: {bar: {dataLabels: {format:"{y:.0f} TSh",enabled: true}}},
 				series: [{
 						data: s
 				}]
@@ -701,7 +709,7 @@ require(["js/charts"], function(charts) {
 				legend: {enabled: false},
 				credits: {enabled: false},
 				tooltip: {enabled:false,pointFormat: '{point.y}'},
-				plotOptions: {bar: {dataLabels: {format:"{y:.0f} £",enabled: true}}},
+				plotOptions: {bar: {dataLabels: {format:"{y:.0f} TSh",enabled: true}}},
 				series: [{
 						data: s
 				}]
@@ -910,7 +918,9 @@ require(["js/charts"], function(charts) {
 		setMonths();
 		setDistrictsItems();
 		loadCharts("*");
+
 		$('#month').change();
+		// $('#mount').children().last()
 		// current_district_data.addTo(map);
 
 	}
