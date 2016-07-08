@@ -1,10 +1,10 @@
 (function() {
 
   var config = {
-    baseURL:"YOUR_BASE_URL",
-    authenticateURL: "YOUR_authenticateURL",
-    mediaURL:"YOUR_mediaURL",
-    token:"YOUR_yourToken",
+    baseURL:"http://52.23.108.108/api/v1/",
+    authenticateURL: "http://52.23.108.108/api/v1/user",
+    mediaURL:"http://52.23.108.108/media/agrisense/attachments/",
+    token:"yourToken",
   }
 
   if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){

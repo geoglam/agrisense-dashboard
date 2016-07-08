@@ -1,4 +1,5 @@
-require([], function() {
+require(["js/charts"], function(charts) {
+
 
 	var d = new Date();
 	var month_key = new Array();
@@ -305,8 +306,8 @@ require([], function() {
 		        title: {text: 'Maize Development Stage'},
 		        xAxis: {categories: categories,title: {text: null}},
 		        yAxis: {min: 0,title: {text: '',align: 'high'},labels: {overflow: 'justify'}},
-		        tooltip: {pointFormat: '{point.y:.2f}',valueSuffix: ' percentage'},
-		        plotOptions: {bar: {dataLabels: {format:"{y:.2f}",enabled: true}}},
+		        tooltip: {enabled:false,pointFormat: '{point.y:.0f}',valueSuffix: ' percentage'},
+		        plotOptions: {bar: {dataLabels: {format:"{y:.0f}%",enabled: true}}},
 		        legend: {enabled:false},
 		        credits: {enabled: false},
 		        series: [{
@@ -333,11 +334,11 @@ require([], function() {
 						title: {text: 'Farmer Assessment of Condition'},
 						xAxis: {categories: categories,title: {text: null}},
 						yAxis: {min: 0,title: {text: '',align: 'high'},labels: {overflow: 'justify'}},
-						tooltip: {pointFormat: '{point.y:.2f}',valueSuffix: ' percentage'},
+						tooltip: {enabled:false,pointFormat: '{y:.0f}%',valueSuffix: ' percentage'},
 						plotOptions: {
 							bar: {
 								dataLabels: {
-									format:"{y:.2f}",
+									format:"{y:.0f}%",
 									enabled: true
 								}
 							},
@@ -462,14 +463,14 @@ require([], function() {
 		$('#chart1').highcharts({
 	        chart: {plotBackgroundColor: null,plotBorderWidth: null,plotShadow: false,type: 'pie'},
 	        title: {text: 'Crop Types'},
-	        tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
+	        tooltip: {enabled:false,pointFormat: '{point.percentage:.0f}%'},
 	        plotOptions: {
 						pie: {
 							allowPointSelect: false,
 							cursor: 'pointer',
 							dataLabels: {
 								enabled: true,
-								format: '{point.name}: {point.y}',
+								format: '{point.name}: {point.percentage:.0f}%',
 								style: {
 									color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
 								}
@@ -521,25 +522,8 @@ require([], function() {
 		}
 		return count
 	}
+
 	function generateFoodPriceBeans(district){
-		// var bins = [800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800]
-		// var step = 200
-		//
-		// data = getData(district,"food_pri_3")
-		// data = data.filter(function(row){
-		// 	return row !=null
-		// });
-		//
-		// var total = data.length -1;
-		// var binStep = 0;
-		// var binCounts = []
-		// for (var i = 0; i < bins.length-1; i++) {
-		// 	var high = bins[i]
-		// 	var low = bins[i] - step
-		// 	var binCount = (countInRange(data,high,low,binStep)/total)*100
-		// 	binCounts.push([bins[i],binCount]);
-		// 	binStep = binStep+1;
-		// }
 		var c = getData2(district,"food_pri_3")
 		var unq_dist =  _.uniq(c.map(function(row){
 			return row.district
@@ -566,55 +550,14 @@ require([], function() {
 				legend: {enabled: false},
 				credits: {enabled: false},
 				tooltip: {enabled:false,pointFormat: '{point.y}'},
-				plotOptions: {bar: {dataLabels: {format:"{y:.2f}",enabled: true}}},
+				plotOptions: {bar: {dataLabels: {format:"{y:.0f} £",enabled: true}}},
 				series: [{
 						data: s
 				}]
 		});
-		// $('#chart9').highcharts({
-		// 		chart: {type: 'column'},
-		// 		title: {text: 'Food Prices Beans'},
-		// 		xAxis: {type: 'category',title:{text:"Food Prices Beans"},labels: {rotation: -45,style: {fontSize: '13px',fontFamily: 'Verdana, sans-serif'}}},
-		// 		yAxis: {min: 0,title: {text: 'Frequency in percentage'}},
-		// 		legend: {enabled: false},
-		// 		credits: {enabled: false},
-		// 		tooltip: {pointFormat: 'Food Prices Beans <b>{point.y:.1f}%</b>'},
-		// 		series: [{
-		// 				name: 'Food Prices Beans',
-		// 				data: binCounts,
-		// 				dataLabels: {
-		// 						enabled: true,
-		// 						rotation: 0,
-		// 						align: 'center',
-		// 						format: '{point.y:.1f}', // one decimal
-		// 						y: 0, // 10 pixels down from the top
-		// 						style: {
-		// 								fontSize: '13px',
-		// 								fontFamily: 'Verdana, sans-serif'
-		// 						}
-		// 				}
-		// 		}]
-		// });
 	}
 
 	function generateFoodPriceCassava(district){
-		// var bins = [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700]
-		// var step = 100
-		// data = getData(district,"food_pri_2")
-		// data = data.filter(function(row){
-		// 	return row !=null
-		// });
-		//
-		// var total = data.length -1;
-		// var binStep = 0;
-		// var binCounts = []
-		// for (var i = 0; i < bins.length-1; i++) {
-		// 	var high = bins[i]
-		// 	var low = bins[i] - step
-		// 	var binCount = (countInRange(data,high,low,binStep)/total)*100
-		// 	binCounts.push([bins[i],binCount]);
-		// 	binStep = binStep+1;
-		// }
 		var c = getData2(district,"food_pri_2")
 		var unq_dist =  _.uniq(c.map(function(row){
 			return row.district
@@ -641,45 +584,14 @@ require([], function() {
 				legend: {enabled: false},
 				credits: {enabled: false},
 				tooltip: {enabled:false,pointFormat: '{point.y}'},
-				plotOptions: {bar: {dataLabels: {format:"{y:.2f}",enabled: true}}},
+				plotOptions: {bar: {dataLabels: {format:"{y:.0f} £",enabled: true}}},
 				series: [{
 						data: s
 				}]
 		});
-		// $('#chart8').highcharts({
-		// 		chart: {type: 'column'},
-		// 		title: {text: 'Food Prices Cassava'},
-		// 		xAxis: {type: 'category',title:{text:"Food Prices Cassava"},labels: {rotation: -45,style: {fontSize: '13px',fontFamily: 'Verdana, sans-serif'}}},
-		// 		yAxis: {min: 0,title: {text: 'Frequency in percentage'}},
-		// 		legend: {enabled: false},
-		// 		credits: {enabled: false},
-		// 		tooltip: {pointFormat: 'Food Prices Cassava <b>{point.y:.1f}%</b>'},
-		// 		series: [{
-		// 				name: 'Food Prices Cassava',
-		// 				data: binCounts,
-		// 				dataLabels: {
-		// 						enabled: true,
-		// 						rotation: 0,
-		// 						align: 'center',
-		// 						format: '{point.y:.1f}%', // one decimal
-		// 						y: 0, // 10 pixels down from the top
-		// 						style: {
-		// 								fontSize: '13px',
-		// 								fontFamily: 'Verdana, sans-serif'
-		// 						}
-		// 				}
-		// 		}]
-		// });
 	}
 
 	function generateFoodPriceRice(district){
-		// var bins = [200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000]
-		// var step = 200
-		// data = getData(district,"food_pri_1")
-		//
-		// data = data.filter(function(row){
-		// 	return row !=null
-		// });
 
 		var c = getData2(district,"food_pri_1")
 		var unq_dist =  _.uniq(c.map(function(row){
@@ -699,22 +611,6 @@ require([], function() {
 		var s = prices_avg.map(function(row){
 			return row.avergare
 		});
-		// console.log(prices_avg)
-		//var salariesOfManagers = _(c).filter({job: 'manager'}).filter('salary').pluck('salary');
-		//var averageSalary = salariesOfManagers.sum() / salariesOfManagers.value().length;
-
-		// console.log('here');
-		// console.log(c);
-		// var total = data.length -1;
-		// var binStep = 0;
-		// var binCounts = []
-		// for (var i = 0; i < bins.length-1; i++) {
-		// 	var high = bins[i]
-		// 	var low = bins[i] - step
-		// 	var binCount = (countInRange(data,high,low,binStep)/total)*100
-		// 	binCounts.push([bins[i],binCount]);
-		// 	binStep = binStep+1;
-		// }
 		$('#chart4').highcharts({
 				chart: {type: 'bar'},
 				title: {text: 'Rice (average price)'},
@@ -723,7 +619,7 @@ require([], function() {
 				legend: {enabled: false},
 				credits: {enabled: false},
 				tooltip: {enabled:false,pointFormat: '{point.y}'},
-				plotOptions: {bar: {dataLabels: {format:"{y:.1f}",enabled: true}}},
+				plotOptions: {bar: {dataLabels: {format:"{y:.0f} £",enabled: true}}},
 				series: [{
 						data: s
 				}]
@@ -756,7 +652,10 @@ require([], function() {
         yAxis: {min: 0,title: {text: 'Frequency in percentage'}},
         legend: {enabled: false},
 				credits: {enabled: false},
-        tooltip: {pointFormat: 'Maize Height {point.y:.1f}%'},
+        tooltip: {
+					enabled:false,
+					pointFormat: 'Maize Height {point.y:.0f}%'
+				},
         series: [{
             name: 'Maize Height',
             data: binCounts,
@@ -764,7 +663,7 @@ require([], function() {
                 enabled: true,
                 rotation: 0,
                 align: 'center',
-                format: '{point.y:.1f}', // one decimal
+                format: '{point.y:.0f}%', // one decimal
                 y: 0, // 10 pixels down from the top
                 style: {
                     fontSize: '13px',
@@ -775,27 +674,6 @@ require([], function() {
     });
 	}
 	function generateMaizeFoodPriceChart(district){
-		// var bins = [300,400,500,600,700,800,900,1000,1500,2000]
-		// var step = 100
-		// data = getData(district,"food_price")
-		// data = data.filter(function(row){
-		// 	return row !=null
-		// });
-		//
-		// data = data.sort();
-		// var total = data.length -1;
-		// var binStep = 0;
-		// var binCounts = []
-		// var temp = 0;
-		// for (var i = 0; i < bins.length-1; i++) {
-		// 	var high = bins[i]
-		// 	var low = bins[i] - step
-		// 	var binCount = (countInRange(data,high,low,binStep)/total)*100
-		//
-		// 	temp = temp +countInRange(data,high,low,binStep);
-		// 	binCounts.push([bins[i],binCount]);
-		// 	binStep = binStep+1;
-		// }
 
 		var c = getData2(district,"food_price")
 		var unq_dist =  _.uniq(c.map(function(row){
@@ -823,39 +701,11 @@ require([], function() {
 				legend: {enabled: false},
 				credits: {enabled: false},
 				tooltip: {enabled:false,pointFormat: '{point.y}'},
-				plotOptions: {bar: {dataLabels: {format:"{y:.2f}",enabled: true}}},
+				plotOptions: {bar: {dataLabels: {format:"{y:.0f} £",enabled: true}}},
 				series: [{
 						data: s
 				}]
 		});
-
-		// $('#chart7').highcharts({
-    //     chart: {type: 'column'},
-    //     title: {text: 'Food Prices Maize'},
-    //     xAxis: {type: 'category',title:{text:"Food Prices Maize"},labels: {rotation: -45,style: {fontSize: '13px',fontFamily: 'Verdana, sans-serif'}}},
-    //     yAxis: {min: 0,title: {text: 'Frequency in percentage'}},
-    //     legend: {enabled: false},
-		// 		credits: {enabled: false},
-    //     tooltip: {pointFormat: '<b>{point.y:.1f}%</b>'},
-    //     series: [{
-    //         name: 'Food Prices Maize',
-    //         data: binCounts,
-    //         dataLabels: {
-    //             enabled: true,
-    //             rotation: 0,
-    //             align: 'center',
-    //             format: '{point.y:.1f}', // one decimal
-    //             y: 0, // 10 pixels down from the top
-    //             style: {
-    //                 fontSize: '13px',
-    //                 fontFamily: 'Verdana, sans-serif'
-    //             }
-    //         }
-    //     }]
-    // });
-
-
-
 	}
 
 	function generateIrrigated(district){
@@ -875,14 +725,14 @@ require([], function() {
 		$('#chart0').highcharts({
 					chart: {plotBackgroundColor: null,plotBorderWidth: null,plotShadow: false,type: 'pie'},
 					title: {text: 'Crop Irrigated'},
-					tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
+					tooltip: {enabled:false,pointFormat: '{point.percentage:.0f}%</b>'},
 					plotOptions: {
 						pie: {
 							allowPointSelect: false,
 							cursor: 'pointer',
 							dataLabels: {
 								enabled: true,
-								format: '{point.name}: {point.y}',
+								format: '{point.name}: {point.percentage:.0f}%',
 								style: {
 									color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
 								}
@@ -925,14 +775,14 @@ require([], function() {
 		$('#chart5').highcharts({
 					chart: {plotBackgroundColor: null,plotBorderWidth: null,plotShadow: false,type: 'pie'},
 					title: {text: 'Crop Weeded'},
-					tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
+					tooltip: {enabled:false,pointFormat: '{point.percentage:.0f}%'},
 					plotOptions: {
 						pie: {
 							allowPointSelect: false,
 							cursor: 'pointer',
 							dataLabels: {
 								enabled: true,
-								format: '{point.name}: {point.y}',
+								format: '{point.name}: {point.percentage:.0f}%',
 								style: {
 									color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
 								}
@@ -940,7 +790,6 @@ require([], function() {
 							point:{
 								events:{
 									mouseOver: function(e) {
-
 										 filterMapByCategory(this.name,"manageme_1")
 									},
 									mouseOut:function(e){
