@@ -1,9 +1,9 @@
 (function() {
 
   var config = {
-    baseURL:"http://52.23.108.108/api/v1/",
-    authenticateURL: "http://52.23.108.108/api/v1/user",
-    mediaURL:"http://52.23.108.108/media/agrisense/attachments/",
+    baseURL:"http://data.agrisense.org/api/v1/",
+    authenticateURL: "http://data.agrisense.org/api/v1/user",
+    mediaURL:"http://data.agrisense.org/media/agrisense/attachments/",
     token:"yourToken",
   }
 

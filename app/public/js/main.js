@@ -1,6 +1,6 @@
 require(["js/charts"], function(charts) {
 
-
+	var selectType = "District";
 	var d = new Date();
 	var month_key = new Array();
 	month_key[1] = "January";
@@ -51,11 +51,20 @@ require(["js/charts"], function(charts) {
 		"fillOpacity": 0,
 };
 
-	var district_boundary = new L.geoJson(null,{
+	var mapDistrictBoundary = new L.geoJson(null,{
 		style: myStyle,
 		onEachFeature: function (feature, layer) {
 			var html = "";
 			html += "<b>District:</b> " + feature.properties.District + "<br/>"
+			layer.bindPopup(html);
+		}
+	});
+
+	var mapRegionBoundary = new L.geoJson(null,{
+		style: myStyle,
+		onEachFeature: function (feature, layer) {
+			var html = "";
+			html += "<b>Region:</b> " + feature.properties.Region + "<br/>"
 			layer.bindPopup(html);
 		}
 	});
@@ -101,7 +110,12 @@ require(["js/charts"], function(charts) {
 			current_month = this.value;
 			current_district = $("#districts").val();
 			monthStateChange(current_month);
-			setDistrictsItems();
+			if (selectType == "District"){
+				setDistrictsItems();
+			}else{
+				setRegionsItems();
+			}
+
 			loadCharts("*");
 
 
@@ -165,7 +179,7 @@ require(["js/charts"], function(charts) {
         return L.circleMarker(latlng, geojsonMarkerOptions);
     	},
 			filter: function(feature, layer) {
-					return ((feature.properties.District == district) && ( feature.properties.month == current_month))
+					return ((feature.properties[selectType] == district) && ( feature.properties.month == current_month))
 			},
 			onEachFeature: function (feature, layer) {
 				var html = ""
@@ -234,6 +248,25 @@ require(["js/charts"], function(charts) {
 		}
 	}
 
+	function setRegionsItems(){
+		var form = $('#formlist').val();
+		if (form == 'in'){
+			var districts = _.uniq(in_season_assessment.getLayers().filter(function(row){
+				return (row.feature.properties.Region != null && row.feature.properties.month == current_month);
+			}).map(function(row){
+				return row.feature.properties.Region;
+			}));
+
+			var html = "<option value='all'>All</option>";
+			districts.sort();
+			$(districts).each(function(key,data){
+				html += "<option value='"+data+"'>"+data+"</option>";
+			});
+			$("#districts").html(html);
+			$("#districts").material_select();
+		}
+	}
+
 	function setMonths(){
 		var form = $('#formlist').val();
 		if (form == 'in'){
@@ -277,7 +310,7 @@ require(["js/charts"], function(charts) {
 
 		}else{
 			data = in_season_assessment.getLayers().filter(function(row){
-		    return ((row.feature.properties.District == district) && (row.feature.properties.month == current_month))
+		    return ((row.feature.properties[selectType] == district) && (row.feature.properties.month == current_month))
 		  }).map(function(row){
 		    return row.feature.properties[field]
 		  });
@@ -290,7 +323,7 @@ require(["js/charts"], function(charts) {
 		data = in_season_assessment.getLayers().filter(function(row){
 			return (row.feature.properties.month == current_month) && (row.feature.properties[field] != 'n/a') && row.feature.properties[field] != '0';
 		}).map(function(row){
-			return {price:row.feature.properties[field],'district':row.feature.properties.District}
+			return {price:row.feature.properties[field],'district':row.feature.properties[selectType]}
 		});
 		return data
 	}
@@ -385,7 +418,7 @@ require(["js/charts"], function(charts) {
 					if (current_district =="*"){
 						return (feature.properties.month == current_month)
 					}else{
-						return (feature.properties.District == current_district && feature.properties.month == current_month) ;
+						return (feature.properties[selectType] == current_district && feature.properties.month == current_month) ;
 					}
 
 			},
@@ -421,7 +454,7 @@ require(["js/charts"], function(charts) {
 						return (feature.properties.month == current_month)
 					}else{
 						// console.log(current_month);
-						return (feature.properties.District == current_district && feature.properties.month == current_month) ;
+						return (feature.properties[selectType] == current_district && feature.properties.month == current_month) ;
 					}
 
 			},
@@ -445,7 +478,7 @@ require(["js/charts"], function(charts) {
 
 	function generateCropTypeChart(district){
 		var data;
-
+		console.log(district)
 		if (district == "*"){
 			data = in_season_assessment.getLayers().filter(function(row){
 				return row.feature.properties.month == current_month;
@@ -453,13 +486,22 @@ require(["js/charts"], function(charts) {
 				return row.feature.properties.agricultur
 			});
 		}else{
-			data = in_season_assessment.getLayers().filter(function(row){
-				return ((row.feature.properties.District == district) && (row.feature.properties.month == current_month))
-			}).map(function(row){
-				return row.feature.properties.agricultur
-			});
-
+			// if(selectType == "Regions"){
+				data = in_season_assessment.getLayers().filter(function(row){
+					console.log(row.feature.properties[selectType])
+					return ((row.feature.properties[selectType] == district) && (row.feature.properties.month == current_month))
+				}).map(function(row){
+					return row.feature.properties.agricultur
+				});
+			// }else if (selectType == "Districts") {
+			// 	data = in_season_assessment.getLayers().filter(function(row){
+			// 		return ((row.feature.properties.District == district) && (row.feature.properties.month == current_month))
+			// 	}).map(function(row){
+			// 		return row.feature.properties.agricultur
+			// 	});
+			// }
 		}
+
 		var unique_crops = _.uniq(data);
 		var chartData = unique_crops.map(function(row){
 			return {
@@ -553,7 +595,7 @@ require(["js/charts"], function(charts) {
 		$('#chart9').highcharts({
 				chart: {type: 'bar'},
 				title: {text: 'Beans (average price)'},
-				xAxis: {categories: unq_dist,title: {text: "Districts"}},
+				xAxis: {categories: unq_dist,title: {text: selectType}},
 				yAxis: {min: 0,title: {text: 'Prices'}},
 				legend: {enabled: false},
 				credits: {enabled: false},
@@ -587,7 +629,7 @@ require(["js/charts"], function(charts) {
 		$('#chart8').highcharts({
 				chart: {type: 'bar'},
 				title: {text: 'Cassava (average price)'},
-				xAxis: {categories: unq_dist,title: {text: "Districts"}},
+				xAxis: {categories: unq_dist,title: {text: selectType}},
 				yAxis: {min: 0,title: {text: 'Prices'}},
 				legend: {enabled: false},
 				credits: {enabled: false},
@@ -622,7 +664,7 @@ require(["js/charts"], function(charts) {
 		$('#chart4').highcharts({
 				chart: {type: 'bar'},
 				title: {text: 'Rice (average price)'},
-				xAxis: {categories: unq_dist,title: {text: "Districts"}},
+				xAxis: {categories: unq_dist,title: {text: selectType}},
 				yAxis: {min: 0,title: {text: 'Prices'}},
 				legend: {enabled: false},
 				credits: {enabled: false},
@@ -704,7 +746,7 @@ require(["js/charts"], function(charts) {
 		$('#chart7').highcharts({
 				chart: {type: 'bar'},
 				title: {text: 'Maize (average price)'},
-				xAxis: {categories: unq_dist,title: {text: "Districts"}},
+				xAxis: {categories: unq_dist,title: {text: selectType}},
 				yAxis: {min: 0,title: {text: 'Prices'}},
 				legend: {enabled: false},
 				credits: {enabled: false},
@@ -860,6 +902,25 @@ require(["js/charts"], function(charts) {
 		setBasemap(basemap);
 	}
 
+
+	function sortTypeChange(){
+		map.removeLayer(current_district_data);
+		map.removeLayer(mapRegionBoundary);
+		map.removeLayer(mapDistrictBoundary);
+		if (selectType == "Region"){
+			 map.addLayer(mapRegionBoundary);
+			 setRegionsItems()
+		}else if (selectType == "District") {
+			map.addLayer(mapDistrictBoundary);
+			// monthStateChange(current_month);
+			setDistrictsItems()
+		}
+		monthStateChange(current_month);
+		current_district_data.addTo(map);
+		// map.addLayer
+
+	}
+
 	function initMap(){
 		map = L.map('map',{
 			fullscreenControl: true,
@@ -880,13 +941,15 @@ require(["js/charts"], function(charts) {
 			}
 		});
 
-
 		// current_district_data.addTo(map);
 
-		district_boundary.addTo(map);
-		addGeoJSON("data/TZdistricts_2012.geojson",district_boundary);
-		addGeoJSON("data/disctrict_join_in_season_assessment.geojson",in_season_assessment);
-		addGeoJSON("data/disctrict_join_in_season_assessment.geojson",current_district_data);
+		mapDistrictBoundary.addTo(map);
+		// mapRegionBoundary.addTo(map);
+		addGeoJSON("data/districts.geojson",mapDistrictBoundary);
+		addGeoJSON("data/regions.geojson",mapRegionBoundary);
+		addGeoJSON("data/in_season_assessment.geojson",in_season_assessment);
+		addGeoJSON("data/in_season_assessment.geojson",current_district_data);
+
 	}
 
 	function init(){
@@ -912,14 +975,18 @@ require(["js/charts"], function(charts) {
 			changeBasemap(this.value);
 		});
 
+		$("#type").change(function(){
+			selectType = this.value;
+			sortTypeChange()
+		});
 
-		stopSplashScreen();
 		initMap();
 		setMonths();
 		setDistrictsItems();
 		loadCharts("*");
 
 		$('#month').change();
+		stopSplashScreen();
 		// $('#mount').children().last()
 		// current_district_data.addTo(map);
 
