@@ -329,7 +329,7 @@ require(["js/charts"], function(charts) {
 	}
 
 	function generateMaizeDevelopmentStage(district){
-		var data = getData(district,"select_med");
+		var data = getData(district,appConfig.chartFields.chart2);
 		data = data.filter(function(row){
 			return row != null
 		});
@@ -357,7 +357,7 @@ require(["js/charts"], function(charts) {
 		    });
 	}
 	function farmerAssessmentCondition(district){
-		var data = getData(district,"farmer_ass");
+		var data = getData(district,appConfig.chartFields.chart6);
 		data = data.filter(function(row){
 			return row != null
 		});
@@ -388,14 +388,14 @@ require(["js/charts"], function(charts) {
 									events:{
 										mouseOver: function(e) {
 											if (this.category == "above average"){
-												filterMapByCategory(this.category.replace(" ","_"),"farmer_ass");
+												filterMapByCategory(this.category.replace(" ","_"),appConfig.chartFields.chart6);
 											}else{
-												filterMapByCategory(this.category,"farmer_ass");
+												filterMapByCategory(this.category,appConfig.chartFields.chart6);
 											}
 
 										},
 										mouseOut:function(e){
-											resetfilterMapByCategory(this.category,"farmer_ass")
+											resetfilterMapByCategory(this.category,appConfig.chartFields.chart6)
 										}
 									}
 								}
@@ -478,12 +478,13 @@ require(["js/charts"], function(charts) {
 
 	function generateCropTypeChart(district){
 		var data;
-		console.log(district)
+		// console.log(district)
 		if (district == "*"){
 			data = in_season_assessment.getLayers().filter(function(row){
 				return row.feature.properties.month == current_month;
 			}).map(function(row){
-				return row.feature.properties.agricultur
+				// return row.feature.properties.agricultur
+				return row.feature.properties[appConfig.chartFields.chart1]
 			});
 		}else{
 			// if(selectType == "Regions"){
@@ -491,7 +492,7 @@ require(["js/charts"], function(charts) {
 					console.log(row.feature.properties[selectType])
 					return ((row.feature.properties[selectType] == district) && (row.feature.properties.month == current_month))
 				}).map(function(row){
-					return row.feature.properties.agricultur
+					return row.feature.properties[appConfig.chartFields.chart1]
 				});
 			// }else if (selectType == "Districts") {
 			// 	data = in_season_assessment.getLayers().filter(function(row){
@@ -528,17 +529,17 @@ require(["js/charts"], function(charts) {
 							point:{
 								events:{
 									select: function(e){
-										filterMapByCategory(this.name,"agricultur")
+										filterMapByCategory(this.name,appConfig.chartFields.chart1)
 									},
 									mouseOver: function(e) {
-										 filterMapByCategory(this.name,"agricultur")
+										 filterMapByCategory(this.name,appConfig.chartFields.chart1)
 									},
 									unselect:function(e){
-										resetfilterMapByCategory(this.name,"agricultur")
+										resetfilterMapByCategory(this.name,appConfig.chartFields.chart1)
 									}
 									,
 									mouseOut:function(e){
-										 resetfilterMapByCategory(this.name,"agricultur")
+										 resetfilterMapByCategory(this.name,appConfig.chartFields.chart1)
 									}
 								}
 							}
@@ -574,7 +575,7 @@ require(["js/charts"], function(charts) {
 	}
 
 	function generateFoodPriceBeans(district){
-		var c = getData2(district,"food_pri_3")
+		var c = getData2(district,appConfig.chartFields.chart9)
 		var unq_dist =  _.uniq(c.map(function(row){
 			return row.district
 		}));
@@ -608,7 +609,7 @@ require(["js/charts"], function(charts) {
 	}
 
 	function generateFoodPriceCassava(district){
-		var c = getData2(district,"food_pri_2")
+		var c = getData2(district,appConfig.chartFields.chart8)
 		var unq_dist =  _.uniq(c.map(function(row){
 			return row.district
 		}));
@@ -643,7 +644,7 @@ require(["js/charts"], function(charts) {
 
 	function generateFoodPriceRice(district){
 
-		var c = getData2(district,"food_pri_1")
+		var c = getData2(district,appConfig.chartFields.chart4)
 		var unq_dist =  _.uniq(c.map(function(row){
 			return row.district
 		}));
@@ -679,7 +680,7 @@ require(["js/charts"], function(charts) {
 	function generateMaizeHeightChart(district){
 		var bins = [0.5,1.0,1.5,2.0,2.5,3.0,4.0,5.0,6.0]
 		var step = 0.5
-		data = getData(district,"crop_condi")
+		data = getData(district,appConfig.chartFields.chart3)
 		data = data.filter(function(row){
 			return row !=null
 
@@ -725,7 +726,7 @@ require(["js/charts"], function(charts) {
 	}
 	function generateMaizeFoodPriceChart(district){
 
-		var c = getData2(district,"food_price")
+		var c = getData2(district,appConfig.chartFields.chart7)
 		var unq_dist =  _.uniq(c.map(function(row){
 			return row.district
 		}));
@@ -760,7 +761,7 @@ require(["js/charts"], function(charts) {
 
 	function generateIrrigated(district){
 
-		data = getData(district,'management')
+		data = getData(district,appConfig.chartFields.chart0)
 		data = data.filter(function(row){
 			return row !=null
 		})
@@ -790,10 +791,10 @@ require(["js/charts"], function(charts) {
 							point:{
 								events:{
 									mouseOver: function(e) {
-										 filterMapByCategory(this.name,"management")
+										 filterMapByCategory(this.name,appConfig.chartFields.chart0)
 									},
 									mouseOut:function(e){
-										 resetfilterMapByCategory(this.name,"management")
+										 resetfilterMapByCategory(this.name,appConfig.chartFields.chart0)
 									}
 								}
 							}
@@ -810,7 +811,7 @@ require(["js/charts"], function(charts) {
 	}
 
 	function generateWeeded(district){
-		data = getData(district,"manageme_1")
+		data = getData(district,appConfig.chartFields.chart5)
 		data = data.filter(function(row){
 			return row !=null
 		})
@@ -840,10 +841,10 @@ require(["js/charts"], function(charts) {
 							point:{
 								events:{
 									mouseOver: function(e) {
-										 filterMapByCategory(this.name,"manageme_1")
+										 filterMapByCategory(this.name,appConfig.chartFields.chart5)
 									},
 									mouseOut:function(e){
-										 resetfilterMapByCategory(this.name,"manageme_1")
+										 resetfilterMapByCategory(this.name,appConfig.chartFields.chart5)
 									}
 								}
 							}
